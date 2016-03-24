@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.mmlab.n1"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/MaterialDrawerTheme.Light.DarkToolbar.TranslucentStatus">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/title_activity_sign_in"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialTheme.SignIn"/>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+        <activity
+            android:name=".SplashActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".TestActivity"
+            android:label="@string/title_activity_test"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".POIActivity"
+            android:label="@string/title_activity_poi"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".VideoDemoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_video_demo"/>
+
+        <service
+            android:name=".network.VideoService"
+            android:enabled="true"
+            android:exported="true"/>
+        <service
+            android:name=".network.ProxyService"
+            android:enabled="true"
+            android:exported="true"/>
+        <service
+            android:name=".network.MemberService"
+            android:enabled="true"
+            android:exported="true"/>
+        <service
+            android:name=".network.CacheService"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <activity
+            android:name=".FriendActivity"
+            android:label="@string/title_activity_friend">
+        </activity>
+        <activity
+            android:name=".AlbumActivity"
+            android:theme="@style/MaterialDrawerTheme.TranslucentStatus">
+        </activity>
+        <activity android:name=".LOIActivity">
+        </activity>
+        <activity android:name=".MyFavoriteActivity">
+        </activity>
+        <activity android:name=".AOIActivity">
+        </activity>
+        <activity
+            android:name=".IntroActivity"
+            android:label="@string/title_activity_intro">
+        </activity>
+    </application>
+
+</manifest>

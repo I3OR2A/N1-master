@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="narrator_setting">
+        <item name="public_hotspot">公開熱點</item>
+        <item name="friends_only">僅限朋友</item>
+        <item name="limit_access">限制存取</item>
+    </array>
+
+    <string-array name="sorting_identifier">
+        <item name="all">全部</item>
+        <item name="expert">專家</item>
+        <item name="user">玩家</item>
+        <item name="narrator">導覽員</item>
+    </string-array>
+
+    <string-array name="sorting_media">
+        <item name="all">全部</item>
+        <item name="photo">相片</item>
+        <item name="movie">影片</item>
+        <item name="audio">聲音</item>
+    </string-array>
+
+    <string-array name="sorting_category">
+        <item name="all">全部</item>
+        <item name="historic_relics">古蹟、歷史建築、聚落</item>
+        <item name="historical_sites">遺址</item>
+        <item name="cultural_sites">人文景觀</item>
+        <item name="nature">自然景觀</item>
+        <item name="traditional_art">傳統藝術</item>
+        <item name="custom_objects">民俗及有關文物</item>
+        <item name="ancient_stuffs">古物</item>
+        <item name="necessities_of_life">食衣住行育樂</item>
+        <item name="other">其他</item>
+    </string-array>
+</resources>

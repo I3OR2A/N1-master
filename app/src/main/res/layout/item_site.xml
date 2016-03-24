@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selector_group"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/group_icon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="8dp"
+        android:duplicateParentState="true" />
+
+    <TextView
+        android:id="@+id/group_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/group_icon"
+        android:layout_toRightOf="@+id/group_icon"
+        android:ellipsize="end"
+        android:padding="2dp"
+        android:singleLine="true"
+        android:text="Unknown Device Name"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/group_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/group_icon"
+        android:layout_toRightOf="@+id/group_icon"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="unknown status"
+        android:textColor="@android:color/darker_gray" />
+
+    <ImageButton
+        android:id="@+id/group_menu"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/selector_group"
+        android:clickable="true"
+        android:duplicateParentState="true"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:scaleType="center"
+        android:src="@drawable/action_menu" />
+</RelativeLayout>
+

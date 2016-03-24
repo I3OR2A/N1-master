@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:padding="8dp"
+                    android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/identifier"
+            android:textColor="#404040"
+            android:textSize="18sp" />
+
+
+        <com.rey.material.widget.Spinner
+            style="@style/Material.Widget.Spinner"
+            android:id="@+id/spn_identifier"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+            app:rd_style="@style/Material.Drawable.Ripple.Wave"
+            app:spn_dividerHeight="0dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/media"
+            android:textColor="#404040"
+            android:textSize="18sp" />
+
+
+        <com.rey.material.widget.Spinner
+            style="@style/Material.Widget.Spinner"
+            android:id="@+id/spn_media"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+            app:rd_style="@style/Material.Drawable.Ripple.Wave"
+            app:spn_dividerHeight="0dp"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/category"
+            android:textColor="#404040"
+            android:textSize="18sp" />
+
+
+        <com.rey.material.widget.Spinner
+            style="@style/Material.Widget.Spinner"
+            android:id="@+id/spn_category"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="8dp"
+            app:rd_style="@style/Material.Drawable.Ripple.Wave"
+            app:spn_dividerHeight="0dp"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

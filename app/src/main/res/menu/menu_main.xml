@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+
+    <item android:id="@+id/deh_sign_in"
+          android:icon="@drawable/ic_person_white_24dp"
+          android:title="@string/deh_sign_in"
+          app:showAsAction="always"/>
+
+    <item android:id="@+id/filter"
+          android:icon="@drawable/ic_sort_white_24dp"
+          android:title="@string/sort"
+          app:showAsAction="always"/>
+
+</menu>

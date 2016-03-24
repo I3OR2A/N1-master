@@ -1,0 +1,167 @@
+<resources>
+    <string name="app_name">Narrator</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="one">One</string>
+    <string name="group">Group</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="site">Site</string>
+    <string name="settings">Settings</string>
+    <string name="title_dialog_identity">Choosing Identity</string>
+    <string name="message_dialog_identity">Identity Option</string>
+
+    <string name="title_dialog_network">Internet Connection</string>
+    <string name="title_dialog_group">Add Group</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="drawer_item_home">Home</string>
+    <string name="drawer_item_sign_in">Sign In</string>
+    <string name="drawer_item_settings">Settings</string>
+    <string name="drawer_item_help">Help</string>
+    <string name="drawer_item_contact">Contact</string>
+    <string name="drawer_item_group">Group</string>
+    <string name="drawer_item_friends">Friends</string>
+    <string name="drawer_item_favorite">Favorite</string>
+    <string name="logout_detail">Are you sure you want to log out</string>
+    <string name="logout_title">Log Out</string>
+
+    <string name="region">Region</string>
+    <string name="meter">m</string>
+    <string name="kilometer">km</string>
+    <string name="number">Number</string>
+    <string name="unit"></string>
+    <string name="search_settings">DEH Search Settings</string>
+    <string name="search">Search</string>
+    <string name="poi">Nearby POI</string>
+    <string name="loi">Nearby LOI</string>
+    <string name="aoi">Nearby AOI</string>
+    <string name="mypoi">My POI</string>
+    <string name="myloi">MY LOI</string>
+    <string name="myaoi">My AOI</string>
+
+    <string name="subject">Subject</string>
+    <string name="type1">Type</string>
+    <string name="keyword">Keyword</string>
+    <string name="address">Address</string>
+    <string name="info">Info</string>
+    <string name="album">Album</string>
+
+    <string name="title_dialog_hotspot">Setting Wi-Fi Hotspot</string>
+    <string name="save">Save</string>
+
+    <string name="title_activity_poi">POIActivity</string>
+    <string name="title_activity_video_demo">VideoDemoActivity</string>
+
+    <string name="action_hide">Hide Panel</string>
+    <string name="action_show">Show Panel</string>
+    <string name="action_anchor_enable">Enable Anchor Point</string>
+    <string name="action_anchor_disable">Disable Anchor Point</string>
+
+    <string name="no_internet_title">No Internet</string>
+    <string name="internet_detail">Open Internet settings</string>
+    <string name="add_to_favorite">Add to favorite success</string>
+    <string name="cancel_add_to_favorite">Remove from favorite</string>
+
+    <string name="hello"><![CDATA[<b>The Awesome Sliding Up Panel</b><br/> Brought to you by<br/><a href="http://umanoapp.com">http://umanoapp.com</a>]]></string>
+    <string name="follow"><![CDATA[Follow us<br/>on <a href="http://twitter.com/umanoapp">Twitter</a>]]></string>
+
+    <string name="pref_nextscreen">Next Screen</string>
+    <string name="pref_nextscreen_summary">Next Screen Summary</string>
+
+    <string name="pref_title_next_screen_toggle_preference">Next Screen toggle preference</string>
+    <string name="pref_summary_next_screen_toggle_preference">Next Screen toggle preference</string>
+
+    <string name="pref_notification_setting">NOTIFICATION AND REMINDERS</string>
+    <string name="pref_notifications">Notification</string>
+    <string name="pref_syncFrequency">Default reminder time</string>
+    <string name="pref_syncFrequency_summary">Default reminder time summary</string>
+
+    <string name="settings_update">Sync data</string>
+    <string name="settings_updateSummary">Auto sync,Wifi sync, power-up sync</string>
+
+    <string name="settings_updateAutomatic">Enable background sync</string>
+    <string name="settings_updateAutomaticSummary">Automatically sync data</string>
+    <string name="settings_updateFrequency">Sync frequency</string>
+    <string name="settings_updateFrequencyDialogTitle">Choose sync frequency</string>
+    <string name="settings_updateOnlyWifi">Wi-Fi only sync</string>
+    <string name="settings_updateOnlyWifiSummary">Automatically sync data only when connected to Wi-Fi</string>
+    <string name="settings_updateOnStartup">Sync data on power-up</string>
+    <string name="settings_updateOnStartupSummary">Starts sync when powered on</string>
+    <string name="settings_updateTimeout">Sync timeout</string>
+    <string name="settings_updateTimeoutDialogTitle">Choose sync timeout</string>
+
+    <string name="settings_display">Presentation</string>
+    <string name="settings_displaySummary">Presentation,location</string>
+
+    <string name="settings_displayEvents">Events</string>
+    <string name="settings_displayEventsDialogTitle">Choose how much events view</string>
+    <string name="settings_displayMagnitudoMin">Min Magnitudo</string>
+    <string name="settings_displayMagnitudoMinDialogTitle">Choose.....</string>
+    <string name="settings_displayDistance"></string>
+    <string name="settings_displayCalculateDistance"></string>
+    <string name="settings_displayCalculateDistanceSummary"></string>
+    <string name="settings_displayBasePoint"></string>
+    <string name="settings_displayAccuracy"></string>
+    <string name="settings_displayAccuracySummary">Accurate detection</string>
+
+    <string name="settings_notify">Notification</string>
+
+    <string name="settings_serverIp">Server Name</string>
+    <string name="setting_serverIpDefault">myserver.mydomain.it</string>
+    <string name="settings_updateTimeoutnPicker">Sync timeout (numberPicker)</string>
+    <string name="settings_updateTimeoutnPickerDialogTitle">Choose sync timeout (minutes)</string>
+    <string name="settings_minute">Minute</string>
+    <string name="settings_minutes">Minutes</string>
+    <string name="setting_notificationSound">Sound</string>
+    <string name="settings_updateFrequencyMulti">Sync frequency (multiselect)</string>
+    <string name="settings_updateFrequencyMultiDialogTitle">Choose sync frequency</string>
+    <string name="title_activity_video_sample">VideoSampleActivity</string>
+    <string name="title_activity_poinew">POINewActivity</string>
+    <string name="title_activity_intro">IntroActivity</string>
+
+    <string name="expert">Expert</string>
+    <string name="user">User</string>
+    <string name="narrator">Narrator</string>
+
+    <string name="group_tour">Group Tour</string>
+    <string name="member">Member</string>
+    <string name="personal_tour">Personal tour</string>
+    <string name="personal">Personal</string>
+    <string name="travel_tour">Travel Tour</string>
+    <string name="historical_sites">Historical Sites</string>
+    <string name="instant_sharing">Instant Sharing</string>
+    <string name="ssid">SSID</string>
+    <string name="security">Security</string>
+    <string name="password">Password</string>
+    <string name="show_password">Show Password</string>
+    <string name="password_notice">Password should be at least 8 characters</string>
+    <string name="open">Public</string>
+    <string name="close">Private</string>
+    <string name="sort">Sort</string>
+    <string name="identifier">Identifier</string>
+    <string name="media">Media</string>
+    <string name="category">Category</string>
+    <string name="deh_sign_in">DEH Log In</string>
+    <string name="showPassword">Show password</string>
+    <string name="account">Account</string>
+    <string name="deh_logout">DEH Account Log Out</string>
+    <string name="deh_logout_detail">Are you sure you want to log out ?</string>
+    <string name="login_success">Log In Success</string>
+    <string name="login_failure">Log In Failure</string>
+    <string name="no_deh_login">Not log into DEH yet</string>
+    <string name="find">Find </string>
+    <string name="sites"> sites</string>
+    <string name="lines"> lines</string>
+    <string name="areas"> areas</string>
+    <string name="not_match">Can\'t find any sites that match the condition</string>
+    <string name="reset">Reset</string>
+
+
+</resources>

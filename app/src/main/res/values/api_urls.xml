@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- IP-->
+    <item name="api_clientIP" type="string">
+        http://deh.csie.ncku.edu.tw/deh/functions/get_client_ip.php
+    </item>
+    <item name="decrypt_deh" type="string">
+        DEH2014@CSIENCKU
+    </item>
+
+    <item name="api_docent_info" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/docentInfo.php?user=
+    </item>
+
+    <!-- POI -->
+    <item name="api_nearbyPOIs" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/nearbyPOIs_AES.php?
+    </item>
+
+    <!-- LOI -->
+    <item name="api_nearbyLOIs" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/nearbyLois_AES.php?
+    </item>
+    <item name="api_loi_seq" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/loisequence_AES.php?
+    </item>
+    <item name="api_poi_id" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/poi?
+    </item>
+
+    <!-- AOI -->
+    <item name="api_nearbyAOIs" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/nearbyAOIs_AES.php?
+    </item>
+    <item name="api_aoi_seq" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/AOI_POIs_AES.php?
+    </item>
+
+    <!-- USER POI -->
+    <item name="api_userPOIs" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/userPoilist_AES.php?
+    </item>
+
+    <!-- USER LOI -->
+    <item name="api_userLOIs" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/userLOIList_AES.php?
+    </item>
+
+    <!-- USER AOI -->
+    <item name="api_userAOIs" type="string">
+        http://deh.csie.ncku.edu.tw/dehencode/json/userAOIList_AES.php?
+    </item>
+
+    <item name="api_dehLogIn" type="string">
+        http://deh.csie.ncku.edu.tw/moe2/mobile_login_new.php?
+    </item>
+
+</resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+
+    <color name="black">#FF000000</color>
+    <color name="red">#FF1744</color>
+    <color name="purple">#651FFF</color>
+    <color name="blue">#0277BD</color>
+    <color name="green">#2E7D32</color>
+    <color name="yellow">#FFC400</color>
+    <color name="orange">#D84315</color>
+    <color name="brown">#4E342E</color>
+    <color name="bluegray">#37474F</color>
+
+    <color name="colorPrimary">#D81B60</color>
+    <color name="colorPrimaryDark">#880E4F</color>
+    <color name="colorPrimaryLight">#E91E63</color>
+    <color name="colorAccent">#F06292</color>
+    <!-- overwrite the selected colors because the primary color is to dark -->
+    <color name="material_drawer_selected_text">#EC407A</color>
+    <color name="material_drawer_dark_selected_text">#536EEA</color>
+
+
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="background">#e5e5e5</color>
+    <color name="half_black">#808080</color>
+    <color name="white">#fafafa</color>
+    <color name="white_pressed">#f1f1f1</color>
+
+
+    <color name="grey_title">#626262</color>
+    <color name="description_color">#878787</color>
+    <color name="black_button">#3C3C3C</color>
+    <color name="divider_grey">#D4D4D4</color>
+
+    <color name="blue_200">#90CAF9</color>
+
+    <color name="secondary">#FF4081</color>
+    <color name="divider">#CCC</color>
+    <color name="icons">#FFF</color>
+    <color name="item_background">#FFF</color>
+
+    <color name="colorMenu">#F48FB1</color>
+    <color name="transparent">#00000000</color>
+</resources>
