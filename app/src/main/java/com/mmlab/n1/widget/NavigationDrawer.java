@@ -2,14 +2,10 @@ package com.mmlab.n1.widget;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
@@ -52,6 +48,7 @@ public class NavigationDrawer {
     private MyApplication globalVariable;
     private Realm realm;
     private ProfileDrawerItem profile;
+    private static final int SIGN_IN=1;
 
     public NavigationDrawer(Activity activity, Toolbar toolbar) {
         globalVariable = (MyApplication) activity.getApplicationContext();
@@ -69,8 +66,6 @@ public class NavigationDrawer {
                         new PrimaryDrawerItem().withName(R.string.drawer_item_home).withIcon(FontAwesome.Icon.faw_home).withSelectable(false),
                         new PrimaryDrawerItem().withName(R.string.drawer_item_sign_in).withIcon(FontAwesome.Icon.faw_user).withIdentifier(1).withSelectable(false),
                         new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_settings).withIcon(FontAwesome.Icon.faw_cog).withSelectable(false),
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_help).withIcon(FontAwesome.Icon.faw_question).withEnabled(false).withSelectable(false),
                         new SecondaryDrawerItem().withName(R.string.drawer_item_contact).withIcon(FontAwesome.Icon.faw_bullhorn).withSelectable(false)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -87,7 +82,8 @@ public class NavigationDrawer {
                                     globalVariable.noticeInternet(activity, view);
                             }
                             if (intent != null) {
-                                activity.startActivity(intent);
+//                                activity.startActivity(intent);
+                                activity.startActivityForResult(intent, SIGN_IN);
                             }
 
                         }
@@ -95,13 +91,13 @@ public class NavigationDrawer {
                         return false;
                     }
                 })
-                .addStickyDrawerItems(
-                        new SecondaryDrawerItem().withName(R.string.drawer_item_settings).withIcon(FontAwesome.Icon.faw_cog).withIdentifier(10)
-                )
                 .withSelectedItem(-1)
                 .build();
 
+
         globalVariable.setDrawer(drawer);
+
+        drawer.openDrawer();
 
     }
 
@@ -180,14 +176,9 @@ public class NavigationDrawer {
                                 .withIcon(FontAwesome.Icon.faw_star)
                                 .withIdentifier(2),
                         new PrimaryDrawerItem()
-                                .withName(R.string.drawer_item_settings)
-                                .withIcon(FontAwesome.Icon.faw_cog),
-                        new PrimaryDrawerItem()
-                                .withName(R.string.drawer_item_help)
-                                .withIcon(FontAwesome.Icon.faw_question),
-                        new SecondaryDrawerItem()
                                 .withName(R.string.drawer_item_contact)
                                 .withIcon(FontAwesome.Icon.faw_bullhorn)
+                                .withIdentifier(3)
                 )
                 .withOnDrawerItemClickListener(
                         new Drawer.OnDrawerItemClickListener() {
@@ -212,6 +203,18 @@ public class NavigationDrawer {
                                             if (intent != null) {
                                                 activity.startActivity(intent);
                                             }
+                                            if (drawerItem.getIdentifier() == 3 && activity.getClass() != MyFavoriteActivity.class) {
+                                                Intent i = new Intent(Intent.ACTION_SEND);
+                                                i.setType("message/rfc822");
+                                                i.putExtra(Intent.EXTRA_EMAIL, new String[]{activity.getString(R.string.deh_email)});
+                                                i.putExtra(Intent.EXTRA_SUBJECT, activity.getString(R.string.feedback));
+                                                try {
+                                                    activity.startActivity(Intent.createChooser(i, activity.getString(R.string.send_email)));
+                                                } catch (android.content.ActivityNotFoundException ex) {
+                                                    Toast.makeText(activity, activity.getString(R.string.no_email_client), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
                                             if (intent != null && activity.getClass() != MainActivity.class) {
                                                 activity.finish();
                                             }
@@ -233,6 +236,12 @@ public class NavigationDrawer {
 
         globalVariable.setDrawer(drawer);
         globalVariable.setHeader(header);
+    }
+
+    public void show(){
+        if(drawer!=null){
+            drawer.openDrawer();
+        }
     }
 
 

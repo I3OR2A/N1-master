@@ -75,4 +75,6 @@ dependencies {
     compile 'com.github.paolorotolo:appintro:3.3.0'
 
     compile 'com.github.rey5137:material:1.2.2'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.android.gms:play-services-location:8.4.0'
 }

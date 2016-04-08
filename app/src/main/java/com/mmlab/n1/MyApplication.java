@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -81,7 +83,7 @@ public class MyApplication extends Application {
 		return longitude;
 	}
 
-	public void setStauts(String status){
+	public void setStatus(String status){
 		this.status = status;
 	}
 
@@ -117,7 +119,6 @@ public class MyApplication extends Application {
 
 	}
 
-
 	public void setDrawer(Drawer drawer) {
 		this.drawer = drawer;
 	}
@@ -139,24 +140,6 @@ public class MyApplication extends Application {
 		super.onCreate();
 
 		realm = Realm.getInstance(this);
-
-		//initialize and create the image loader logic
-//		DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
-//			@Override
-//			public void set(ImageView imageView, Uri uri, Drawable placeholder) {
-//				Glide.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
-//			}
-//
-//			@Override
-//			public void cancel(ImageView imageView) {
-//				Glide.clear(imageView);
-//			}
-//
-//			@Override
-//			public Drawable placeholder(Context ctx) {
-//				return null;
-//			}
-//		});
 
 		DrawerImageLoader.init(new AbstractDrawerImageLoader() {
 			@Override
@@ -211,6 +194,7 @@ public class MyApplication extends Application {
 		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		LocationListener locationListener = new LocationListener() {
 
+
 			@Override
 			public void onLocationChanged(Location location) {
 				if (location != null) {
@@ -225,21 +209,19 @@ public class MyApplication extends Application {
 
 			@Override
 			public void onProviderDisabled(String provider) {
-				if (provider.equals("gps")) {
-					Toast.makeText(getApplicationContext(), "GPS is off", Toast.LENGTH_LONG).show();
 
-					startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-				}
-				Log.i("lm_disabled", provider);
+				Toast.makeText(getApplicationContext(), getString(R.string.no_gps_title), Toast.LENGTH_LONG).show();
 			}
 
 			@Override
 			public void onProviderEnabled(String provider) {
+
 			}
 
 			@Override
 			public void onStatusChanged(String provider,
 										int status, Bundle extras) {
+
 			}
 		};
 
@@ -271,5 +253,6 @@ public class MyApplication extends Application {
 			Log.e("Location", "Cannot get location!");
 		}
 	}
+
 
 }

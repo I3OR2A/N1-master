@@ -39,7 +39,7 @@ public class SaveLOI {
 				String identifier = object.getString("identifier");
 
 				loiList.add(new LOIModel(loiID, loiName, loiDuration, loiInfo, con, identifier));
-				Log.d("Route", loiID + " " + loiName + " " + loiDuration + " " + loiInfo);
+				Log.d("Route", loiID + " " + loiName + " " + identifier);
 
 			}
 

@@ -631,6 +631,7 @@ public class ProxyService extends Service implements TaskCompleted {
                     if (type.equals("POI") || type.equals("MyPOI")) {
                         SavePOI savePOI = new SavePOI();
                         savePOI.parsePoiListJSONObject(result);
+//                        savePOI.parsePoiListJSONObject(result, status);
                         poiList.clear();
                         poiList = savePOI.getPOIList();
                         intent.setAction(GETPOI_ACTION);

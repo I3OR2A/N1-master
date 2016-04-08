@@ -26,15 +26,20 @@ public class SaveLOISequence {
             loiSequenceList.clear();
             JSONArray results = jsonResponse.getJSONArray("POIsequence");
             for (int i = 0; i < results.length(); i++) {
+
                 JSONObject object = results.getJSONObject(i);
                 String poiId = object.getString("POIid");
                 String poiTitle = object.getString("POItitle");
+                Double poiLat = object.getDouble("latitude");
+                Double poiLong = object.getDouble("longitude");
                 String poiDescription = object.getString("description");
                 String open = object.getString("open");
                 String contributor = object.getString("rights");
                 String identifier = object.getString("identifier");
-                loiSequenceList.add(new LOISequenceModel(poiId, poiTitle, poiDescription, open, contributor, identifier));
-                Log.d("LOISequence", poiId + " " + poiTitle);
+                int mediaFormat = object.getInt("POI_media_fmt");
+                loiSequenceList.add(new LOISequenceModel(poiId, poiTitle, poiLat, poiLong, poiDescription, open, contributor, identifier, mediaFormat));
+//                Log.d("LOISequence", poiTitle + " " + poiLat + " " + poiLong);
+                Log.d("twst", object.toString());
             }
 
         } catch (JSONException e) {

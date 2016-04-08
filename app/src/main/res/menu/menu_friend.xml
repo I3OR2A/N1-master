@@ -2,9 +2,10 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.example.waynewei.onego.POIActivity">
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
+
+    <item  android:id="@+id/update_friends"
+           android:title="@string/update_friends"
+           android:icon="@drawable/ic_sync_white_24dp"
+           android:orderInCategory="100"
+           app:showAsAction="always"/>
 </menu>

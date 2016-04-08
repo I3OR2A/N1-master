@@ -8,10 +8,12 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -22,15 +24,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -38,22 +37,17 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.internal.MDButton;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.github.jorgecastilloprz.listeners.FABProgressListener;
+import com.google.android.gms.location.LocationListener;
 import com.melnykov.fab.FloatingActionButton;
 import com.mmlab.n1.constant.IDENTITY;
 import com.mmlab.n1.constant.MSN;
 import com.mmlab.n1.helper.ExternalStorage;
 import com.mmlab.n1.model.DEHUser;
-import com.mmlab.n1.model.Friend;
-import com.mmlab.n1.model.MyFavorite;
 import com.mmlab.n1.model.POIModel;
 import com.mmlab.n1.network.CacheService;
 import com.mmlab.n1.service.Filter;
@@ -77,9 +71,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -92,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
     public static final int PAGE_SITE = 1;
     private Toolbar toolbar = null;
     private TabLayout tabLayout = null;
+    private static final int SIGN_IN=1;
+
     /**
      * V2 Start
      */
@@ -110,19 +105,11 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
             R.layout.toolbar_site
     };
 
-    private ImageButton imageButton_identity = null;
-    private ImageButton imageButton_network = null;
-    private ImageButton imageButton_add_group = null;
-    private ImageButton imageButton_search = null;
-
     private ProxyService mServer = null;
     private MemberService mClient = null;
 
     private ServerReceiver serverReceiver = null;
     private ClientReceiver clientReceiver = null;
-
-    private Intent intentService = null;
-    private Intent intentClient = null;
 
     private android.app.FragmentManager fragmentManager = null;
     private MyApplication globalVariable;
@@ -143,13 +130,13 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
     private String media;
     private String category;
     private Fragment page;
-    private ArrayList<POIModel> poiModels = new ArrayList<>();
     private String url;
     private EditText accountInput;
     private TextView passwordInput;
     private Realm realm;
     private RealmResults<DEHUser> userResult;
     private String userId;
+    private IdentityDialog identityDialog;
 
 
     public void clearFileDirectory(File fileOrDirectory) {
@@ -169,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         setContentView(R.layout.activity_main);
 
         globalVariable = (MyApplication) getApplicationContext();
+
 
         Intent intent = new Intent(this, IntroActivity.class);
         startActivity(intent);
@@ -198,9 +186,14 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
 
 
 
-
-
         navigationDrawer = new NavigationDrawer(this, toolbar);
+
+        identityDialog = new IdentityDialog();
+
+        RealmResults<User> userResult = realm.where(User.class).findAll();
+        if (!userResult.isEmpty()) {
+            identityDialog.show(getFragmentManager(), "identityDialog");
+        }
 
 
         init();
@@ -208,8 +201,6 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         fab.setVisibility(View.GONE);
         fabProgressCircle.setVisibility(View.GONE);
 
-        IdentityDialog dialog = new IdentityDialog();
-        dialog.show(getFragmentManager(), "identityDialog");
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         actionBar = (Toolbar) findViewById(R.id.action_bar);
@@ -233,8 +224,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         ImageButton imageButton_identity = (ImageButton) actionBar.findViewById(R.id.imageButton_identity);
         imageButton_identity.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                IdentityDialog dialog = new IdentityDialog();
-                dialog.show(getFragmentManager(), "identityDialog");
+                identityDialog.show(getFragmentManager(), "identityDialog");
             }
         });
 
@@ -285,24 +275,9 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         setupTabIcons();
 
 
-        /**
-         * V2
-         */
-//        layout_disconnect = (View) findViewById(R.id.layout_disconnect);
-//        button_reconnect = (Button) layout_disconnect.findViewById(R.id.button_reconnect);
-//        button_reconnect.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (mClient != null) {
-//                    onDisConnectMessage(false);
-//                    mClient.stopClient();
-//                    mClient.startClient();
-//                }
-//            }
-//        });
-
         MSN.identity = Preset.loadPreferences(getApplicationContext());
         startService();
+
 
 
     }
@@ -320,205 +295,176 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
             public void onClick(View view) {
                 if (globalVariable.checkInternet()) {
 
-                    userResult = realm.where(DEHUser.class)
-                            .findAll();
+                        userResult = realm.where(DEHUser.class)
+                                .findAll();
 
-                    for (DEHUser user : userResult) {
-                        userId = user.getId();
-                    }
+                        for (DEHUser user : userResult) {
+                            userId = user.getId();
+                        }
 
-                    MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
-                            .title(R.string.search_settings)
-                            .customView(R.layout.dialog_search, true)
-                            .positiveText(R.string.search)
-                            .negativeText(R.string.cancel)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                    if (number != 0 && distance != 0) {
-                                        Double lat = globalVariable.getLatitude();
-                                        Double lng = globalVariable.getLongitude();
-                                        if (selectTab == 0) {
-                                            mType = "POI";
-                                            api = getResources().getString(R.string.api_nearbyPOIs);
-                                        } else if (selectTab == 1) {
-                                            mType = "LOI";
-                                            api = getResources().getString(R.string.api_nearbyLOIs);
-                                        } else if (selectTab == 2) {
-                                            mType = "AOI";
-                                            api = getResources().getString(R.string.api_nearbyAOIs);
-                                        } else if (selectTab == 3) {
-                                            mType = "MyPOI";
-                                            api = getResources().getString(R.string.api_userPOIs);
-                                        } else if (selectTab == 4) {
-                                            mType = "MyLOI";
-                                            api = getResources().getString(R.string.api_userLOIs);
-                                        } else if (selectTab == 5) {
-                                            mType = "MyAOI";
-                                            api = getResources().getString(R.string.api_userAOIs);
-                                        }
+                        MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+                                .title(R.string.search_settings)
+                                .customView(R.layout.dialog_search, true)
+                                .positiveText(R.string.search)
+                                .negativeText(R.string.cancel)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                        if (number != 0 && distance != 0) {
+                                            Double lat = globalVariable.getLatitude();
+                                            Double lng = globalVariable.getLongitude();
+                                            if (selectTab == 0) {
+                                                mType = "POI";
+                                                api = getResources().getString(R.string.api_nearbyPOIs);
+                                            } else if (selectTab == 1) {
+                                                mType = "LOI";
+                                                api = getResources().getString(R.string.api_nearbyLOIs);
+                                            } else if (selectTab == 2) {
+                                                mType = "AOI";
+                                                api = getResources().getString(R.string.api_nearbyAOIs);
+                                            } else if (selectTab == 3) {
+                                                mType = "MyPOI";
+                                                api = getResources().getString(R.string.api_userPOIs);
+                                            } else if (selectTab == 4) {
+                                                mType = "MyLOI";
+                                                api = getResources().getString(R.string.api_userLOIs);
+                                            } else if (selectTab == 5) {
+                                                mType = "MyAOI";
+                                                api = getResources().getString(R.string.api_userAOIs);
+                                            }
 
-                                        globalVariable.setStauts(mType);
+                                            globalVariable.setStatus(mType);
 
-                                        url = api + "lat=" + lat + "&lng=" + lng + "&dist=" + distance + "&num=" +
-                                                number + "&did=" + globalVariable.getDeviceID() +
-                                                "&appver=mini200&ulat=22.9942&ulng=120.1659&clang=" + globalVariable.getLanguage();
+                                            String language = Locale.getDefault().getDisplayLanguage();
+                                            if (language.equals("English"))
+                                                language = "en";
+                                            else if (language.equals("中文"))
+                                                language = "zh-tw";
+                                            else if (language.equals("日本語"))
+                                                language = "ja";
 
-                                        if (selectTab > 2) {
-                                            url = api + "id=" + "DEHpoi01" + "&lat=" + lat + "&lng=" + lng + "&dist=" + distance + "&num=" +
+                                            Log.d("lang", language);
+
+                                            url = api + "lat=" + lat + "&lng=" + lng + "&dist=" + distance + "&num=" +
                                                     number + "&did=" + globalVariable.getDeviceID() +
-                                                    "&appver=mini200&ulat=22.9942&ulng=120.1659";
+                                                    "&appver=mini200&ulat=22.9942&ulng=120.1659&clang=" + language;
+
+                                            if (selectTab > 2) {
+                                                url = api + "id=" + userId + "&lat=" + lat + "&lng=" + lng + "&dist=" + distance + "&num=" +
+                                                        number + "&did=" + globalVariable.getDeviceID() +
+                                                        "&appver=mini200&ulat=22.9942&ulng=120.1659";
+                                            }
+
+                                            Log.d("url", url);
+                                            Log.d("type", mType);
+
+                                            if (!taskRunning) {
+                                                mServer.Search(mType, url);
+
+                                                fabProgressCircle.show();
+                                                taskRunning = true;
+                                            }
+
                                         }
 
-                                        Log.d("url", url);
-                                        Log.d("type", mType);
-
-                                        if (!taskRunning) {
-                                            mServer.Search(mType, url);
-
-                                            fabProgressCircle.show();
-                                            taskRunning = true;
-//                                            diabler = new RecyclerViewDisabler();
-//                                            mRecyclerView.addOnItemTouchListener(diabler);
-//											mSwipeRefreshLayout.setVisibility(View.INVISIBLE);
-                                        }
-
+                                        selectTab = 0;
+                                        identifier = "all";
+                                        media = "all";
+                                        category = "all";
                                     }
+                                })
+                                .build();
 
-                                    selectTab = 0;
-                                    identifier = "all";
-                                    media = "all";
-                                    category = "all";
-                                }
-                            })
-                            .build();
+                        TabLayout tabLayout = (TabLayout) dialog.getCustomView().findViewById(R.id.tab);
+                        tabLayout.addTab(tabLayout.newTab().setText(R.string.poi));
+                        tabLayout.addTab(tabLayout.newTab().setText(R.string.loi));
+                        tabLayout.addTab(tabLayout.newTab().setText(R.string.aoi));
 
-                    TabLayout tabLayout = (TabLayout) dialog.getCustomView().findViewById(R.id.tab);
-                    tabLayout.addTab(tabLayout.newTab().setText(R.string.poi));
-                    tabLayout.addTab(tabLayout.newTab().setText(R.string.loi));
-                    tabLayout.addTab(tabLayout.newTab().setText(R.string.aoi));
-
-                    if(!userResult.isEmpty()){
-                        tabLayout.addTab(tabLayout.newTab().setText(R.string.mypoi));
-                        tabLayout.addTab(tabLayout.newTab().setText(R.string.myloi));
-                        tabLayout.addTab(tabLayout.newTab().setText(R.string.myaoi));
-                    }
-
-                    final ViewPager viewPager = (ViewPager) dialog.getCustomView().findViewById(R.id.viewpager);
-
-                    viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-                    tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                        @Override
-                        public void onTabSelected(TabLayout.Tab tab) {
-
-                            selectTab = tab.getPosition();
+                        if (!userResult.isEmpty()) {
+                            tabLayout.addTab(tabLayout.newTab().setText(R.string.mypoi));
+                            tabLayout.addTab(tabLayout.newTab().setText(R.string.myloi));
+                            tabLayout.addTab(tabLayout.newTab().setText(R.string.myaoi));
                         }
 
-                        @Override
-                        public void onTabUnselected(TabLayout.Tab tab) {
+                        final ViewPager viewPager = (ViewPager) dialog.getCustomView().findViewById(R.id.viewpager);
 
-                        }
+                        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+                        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                            @Override
+                            public void onTabSelected(TabLayout.Tab tab) {
 
-                        @Override
-                        public void onTabReselected(TabLayout.Tab tab) {
+                                selectTab = tab.getPosition();
+                            }
 
-                        }
-                    });
+                            @Override
+                            public void onTabUnselected(TabLayout.Tab tab) {
 
-                    SeekBar seekbarDistance = (SeekBar) dialog.getCustomView().findViewById(R.id.seekBar_distance);
-                    seekbarDistance.setProgress(DEFAULT_DISTANCE);
-                    distance = (double) DEFAULT_DISTANCE;
-                    final TextView textViewDistance = (TextView) dialog.getCustomView().findViewById(R.id.text_distance);
-                    textViewDistance.setText(new DecimalFormat("#0.0").format(DEFAULT_DISTANCE / 1000) + " " + getString(R.string.kilometer));
-                    seekbarDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                        @Override
-                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            distance = (double) progress;
-                        }
+                            }
 
-                        @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) {
+                            @Override
+                            public void onTabReselected(TabLayout.Tab tab) {
 
-                        }
+                            }
+                        });
 
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
-                            textViewDistance.setText(new DecimalFormat("#0.0").format(distance / 1000) + " " + getString(R.string.kilometer));
-                        }
-                    });
+                        SeekBar seekbarDistance = (SeekBar) dialog.getCustomView().findViewById(R.id.seekBar_distance);
+                        seekbarDistance.setProgress(DEFAULT_DISTANCE);
+                        distance = (double) DEFAULT_DISTANCE;
+                        final TextView textViewDistance = (TextView) dialog.getCustomView().findViewById(R.id.text_distance);
+                        textViewDistance.setText(new DecimalFormat("#0.0").format(DEFAULT_DISTANCE / 1000) + " " + getString(R.string.kilometer));
+                        seekbarDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                distance = (double) progress;
+                            }
 
-                    SeekBar seekbarNumber = (SeekBar) dialog.getCustomView().findViewById(R.id.seekBar_number);
-                    seekbarNumber.setProgress(DEFAULT_NUMBER);
-                    number = DEFAULT_NUMBER;
-                    final TextView textViewNumber = (TextView) dialog.getCustomView().findViewById(R.id.text_number);
-                    textViewNumber.setText(seekbarNumber.getProgress() + " " + getResources().getString(R.string.unit));
-                    seekbarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                        @Override
-                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            number = progress;
-                        }
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) {
 
-                        @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) {
+                            }
 
-                        }
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) {
+                                textViewDistance.setText(new DecimalFormat("#0.0").format(distance / 1000) + " " + getString(R.string.kilometer));
+                            }
+                        });
 
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
-                            textViewNumber.setText(number + " " + getResources().getString(R.string.unit));
-                        }
-                    });
+                        SeekBar seekbarNumber = (SeekBar) dialog.getCustomView().findViewById(R.id.seekBar_number);
+                        seekbarNumber.setProgress(DEFAULT_NUMBER);
+                        number = DEFAULT_NUMBER;
+                        final TextView textViewNumber = (TextView) dialog.getCustomView().findViewById(R.id.text_number);
+                        textViewNumber.setText(seekbarNumber.getProgress() + " " + getResources().getString(R.string.unit));
+                        seekbarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                number = progress;
+                            }
 
-                    dialog.show();
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) {
 
-                } else {
+                            }
+
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) {
+                                textViewNumber.setText(number + " " + getResources().getString(R.string.unit));
+                            }
+                        });
+
+                        dialog.show();
+
+
+                }else {
                     globalVariable.noticeInternet(MainActivity.this, fab);
                 }
             }
         });
     }
 
-    /**
-     * V2 Start
-     */
-
-//    public void onDisConnectMessage(final boolean enabled) {
-//        Log.d(TAG, "onDisConnectMessage()...");
-//        runOnUiThread(new Runnable() {
-//            public void run() {
-//                if (enabled) {
-//                    layout_disconnect.setVisibility(View.VISIBLE);
-//                } else {
-//                    layout_disconnect.setVisibility(View.GONE);
-//                }
-//            }
-//        });
-//    }
     public void exitDEH() {
         finish();
     }
 
-//    @Override
-//    protected void onNewIntent(Intent intent) {
-//        super.onNewIntent(intent);
-//        setIntent(intent);
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        Log.d(TAG, "onResume()...");
-//
-//        try{
-//            boolean refresh = getIntent().getBooleanExtra("refresh_drawer", false);
-//            if(refresh) {
-//                Log.d(TAG, "drawer is refreshed");
-//                globalVariable.createDrawer(navigationDrawer);
-//            }
-//        }catch (Exception e){
-//            Log.d(TAG, e.toString(), e);
-//        }
-//    }
 
     protected void onStop() {
         super.onStop();
@@ -582,6 +528,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
 
         if(getIntent().getBooleanExtra("refresh_drawer", false) == true){
             globalVariable.createDrawer(navigationDrawer);
+
         }
     }
 
@@ -821,7 +768,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                 }
                 Snackbar.make(coordinatorLayout, hint, Snackbar.LENGTH_SHORT).show();
             }
-            if (viewPager.getCurrentItem() == PAGE_SITE) {
+            if ( viewPager.getCurrentItem() == PAGE_SITE ) {
                 taskRunning = false;
                 fabProgressCircle.beginFinalAnimation();
                 page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
@@ -830,39 +777,39 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                     Filter filter = new Filter(getApplicationContext());
                     final ArrayList<POIModel> filteredModelList, filteredModelList1, filteredModelList2;
 
-                    if(identifier!=null && media!= null && category != null) {
-                        if (identifier == "all" && media == "all" && category == "all") {
+                    if( identifier!=null && media!= null && category != null ) {
+                        if (identifier.equals("all") && media.equals("all") && category.equals("all")) {
                             ((SiteFragment) page).updateSites(mServer, 0, mType);
-                            hint = getString(R.string.find) + mServer.getPOIList().size() +  getString(R.string.sites);
+                            hint = getString(R.string.find) + " " + mServer.getPOIList().size() + " " +  getString(R.string.sites);
 
-                        } else if (identifier != "all" && media == "all" && category == "all") {
+                        } else if ( !identifier.equals("all") && media.equals("all") && category.equals("all")) {
                             filteredModelList = filter.identifierFilter(mServer.getPOIList(), identifier.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList);
 
                             if (filteredModelList.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) + filteredModelList.size() +  getString(R.string.sites);
+                                hint = getString(R.string.find) +  " " + filteredModelList.size() + " " +  getString(R.string.sites);
 
-                        } else if (identifier == "all" && media != "all" && category == "all") {
+                        } else if ( identifier.equals("all") && !media.equals("all") && category.equals("all")) {
                             filteredModelList = filter.mediaFilter(mServer.getPOIList(), media.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList);
 
                             if (filteredModelList.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) + filteredModelList.size() +  getString(R.string.sites);
+                                hint = getString(R.string.find) +  " " + filteredModelList.size() + " " + getString(R.string.sites);
 
-                        } else if (identifier == "all" && media == "all" && category != "all") {
+                        } else if ( identifier.equals("all") && media.equals("all") && !category.equals("all")) {
                             filteredModelList = filter.categoryFilter(mServer.getPOIList(), category.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList);
 
                             if (filteredModelList.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) + filteredModelList.size() +  getString(R.string.sites);
+                                hint =  getString(R.string.find) +  " " + filteredModelList.size() + " " +  getString(R.string.sites);
 
-                        } else if (identifier != "all" && media != "all" && category == "all") {
+                        } else if ( !identifier.equals("all") && !media.equals("all") && category.equals("all")) {
                             filteredModelList = filter.identifierFilter(mServer.getPOIList(), identifier.toLowerCase());
                             filteredModelList1 = filter.mediaFilter(filteredModelList, media.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList1);
@@ -870,9 +817,9 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             if (filteredModelList1.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) + filteredModelList1.size() +  getString(R.string.sites);
+                                hint = getString(R.string.find) +  " " + filteredModelList1.size() + " " +  getString(R.string.sites);
 
-                        } else if (identifier != "all" && media == "all" && category != "all") {
+                        } else if ( !identifier.equals("all") && media.equals("all") && !category.equals("all")) {
                             filteredModelList = filter.identifierFilter(mServer.getPOIList(), identifier.toLowerCase());
                             filteredModelList1 = filter.categoryFilter(filteredModelList, category.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList1);
@@ -880,9 +827,9 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             if (filteredModelList1.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) + filteredModelList1.size() +  getString(R.string.sites);
+                                hint = getString(R.string.find) +  " " + filteredModelList1.size() + " " +  getString(R.string.sites);
 
-                        } else if (identifier == "all" && media != "all" && category != "all") {
+                        } else if (identifier.equals("all") && !media.equals("all") && !category.equals("all")) {
                             filteredModelList = filter.mediaFilter(mServer.getPOIList(), media.toLowerCase());
                             filteredModelList1 = filter.categoryFilter(filteredModelList, category.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList1);
@@ -890,7 +837,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             if (filteredModelList1.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) + filteredModelList1.size() +  getString(R.string.sites);
+                                hint = getString(R.string.find) +  " " + filteredModelList1.size() +  " " +  getString(R.string.sites);
 
                         } else {
                             filteredModelList = filter.identifierFilter(mServer.getPOIList(), identifier.toLowerCase());
@@ -901,7 +848,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             if (filteredModelList2.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) + filteredModelList2.size() +  getString(R.string.sites);
+                                hint =  getString(R.string.find) +  " " + filteredModelList2.size() + " " +  getString(R.string.sites);
                         }
                     }
 
@@ -912,18 +859,18 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                     ((SiteFragment) page).updateSites(mServer, 1, mType);
                     ProxyService.type = 1;
                     mMenu.findItem(R.id.filter).setVisible(false);
-                    hint = getString(R.string.find) + mServer.getLOIList().size() + getString(R.string.lines);
+                    hint = getString(R.string.find) + " " +  mServer.getLOIList().size() +  " " + getString(R.string.lines);
                 } else if (ProxyService.GETAOI_ACTION.equals(intent.getAction())) {
                     ((SiteFragment) page).updateSites(mServer, 2, mType);
                     ProxyService.type = 2;
                     mMenu.findItem(R.id.filter).setVisible(false);
-                    hint = getString(R.string.find) + mServer.getAOIList().size() + getString(R.string.areas);
+                    hint = getString(R.string.find) +  " " + mServer.getAOIList().size() +  " " + getString(R.string.areas);
                 }
             }
 //            if (ProxyService.GETPOI_ACTION.equals(intent.getAction())) {
 //                if (viewPager.getCurrentItem() == PAGE_SITE) {
 //                    Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
-//                    ((SiteFragment) page).updateSites(mServer.getPOIList());
+//                    ((SiteFragment) page).updateSites(mServer.getPOIList(), mType);
 //                }
 //            }
             if (ProxyService.MEMBER_ACTION.equals(intent.getAction())) {
@@ -1115,6 +1062,21 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         Log.d("push", identifier+media+category);
         mServer.Search(mType, url);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode){
+            case SIGN_IN:
+                if(data!=null) {
+                    if (data.getExtras().getString("login_success").equals("Login Success"))
+                        identityDialog.show(getFragmentManager(), "identityDialog");
+                }
+        }
+    }
+
+
 
 
 }

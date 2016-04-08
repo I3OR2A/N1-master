@@ -50,21 +50,24 @@ public class LOIAdapter extends RecyclerView.Adapter<LOIAdapter.LOIViewHolder> {
 		mDrawableBuilder = TextDrawable.builder()
 				.round();
 //		TextDrawable drawable = mDrawableBuilder.build(String.valueOf(model.getLOIName().charAt(0)), mColorGenerator.getColor(position+1));
-		String identifier = "";
-		TextDrawable drawable = null;
-		if(model.getIdentifier().equals("expert")){
+		String identifier;
+		TextDrawable drawable;
+		if(model.getIdentifier().equals("expert")) {
 			identifier = mContext.getString(R.string.expert);
 			drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_indigo_500));
 
 		}
-		else if(model.getIdentifier().equals("user")){
+		else if(model.getIdentifier().equals("user")) {
 			identifier = mContext.getString(R.string.user);
 			drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_orange_500));
 
 		}
-		else {
+		else if(model.getIdentifier().equals("docent")) {
 			identifier = mContext.getString(R.string.narrator);
 			drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_purple_500));
+		}
+		else {
+			drawable = mDrawableBuilder.build(String.valueOf(model.getLOIName().charAt(0)), mColorGenerator.getColor(model.getLOIName().charAt(0)));
 		}
 
 		holder.imageView.setImageDrawable(drawable);
@@ -166,7 +169,7 @@ public class LOIAdapter extends RecyclerView.Adapter<LOIAdapter.LOIViewHolder> {
 			mInfo = (TextView) itemView.findViewById(R.id.infoTextView);
 			mDuration = (TextView) itemView.findViewById(R.id.captionTextView);
 			imageView = (ImageView) itemView.findViewById(R.id.imageView);
-			mIcon = (ImageView) itemView.findViewById(R.id.captionIcon);
+			mIcon = (ImageView) itemView.findViewById(R.id.captionIcon4);
 		}
 
 	}

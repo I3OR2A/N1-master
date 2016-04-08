@@ -3,6 +3,7 @@ package com.mmlab.n1;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,69 +39,72 @@ public class LOIActivity extends AppCompatActivity implements TaskCompleted {
 	private LOISequenceAdapter mAdapter;
 	private ArrayList<LOISequenceModel> loiSequenceList = new ArrayList<>();
 	private MyApplication globalVariable;
+	private LOIModel model;
+	private Menu mMenu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_loi);
 
-		final LOIModel item = getIntent().getParcelableExtra("LOI-Content");
+		model = getIntent().getParcelableExtra("LOI-Content");
 		globalVariable = (MyApplication) getApplicationContext();
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		assert getSupportActionBar() != null;
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(item.getLOIName());
+		getSupportActionBar().setTitle(model.getLOIName());
 
 		ExpandableTextView mDescription = (ExpandableTextView) findViewById(R.id.expand_text_view);
-		mDescription.setText(item.getLOIInfo());
+		mDescription.setText(model.getLOIInfo());
 		TextView docentName = (TextView) findViewById(R.id.docent_name);
-		if (item.getIdentifier().equals("docent")) {
-			try {
-				docentName.setText(item.getContributorDetail().getString("name"));
-                docentName.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        MaterialDialog materialDialog;
-                        String alertMessage = "";
-                        JSONObject obj = item.getContributorDetail();
-                        materialDialog = new MaterialDialog.Builder(view.getContext())
-                                .title("導覽員資訊")
-                                .positiveText(R.string.confirm)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        // TODO
-                                    }
-                                }).build();
-                        try {
-                            alertMessage += "姓名:" + obj.getString("name");
-                            alertMessage += "\n電話: " + obj.getString("telphone");
-                            alertMessage += "\n手機: " + obj.getString("cellphone");
-                            alertMessage += "\nEmail: " + obj.getString("email");
-                            alertMessage += "\n地址: " + obj.getString("user_address");
-                            alertMessage += "\n社群帳號: " + obj.getString("social_id");
-                            alertMessage += "\n導覽解說地區: " + obj.getString("docent_area");
-                            alertMessage += "\n導覽解說使用語言: " + obj.getString("docent_language");
-                            alertMessage += "\n收費標準: " + obj.getString("charge");
-                            alertMessage += "\n自我介紹: " + obj.getString("introduction");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        materialDialog.setMessage(alertMessage);
-                        materialDialog.show();
-                    }
-                });
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
+//		if (model.getIdentifier().equals("docent")) {
+//
+//			try {
+//				docentName.setText(model.getContributorDetail().getString("name"));
+//                docentName.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        MaterialDialog materialDialog;
+//                        String alertMessage = "";
+//                        JSONObject obj = model.getContributorDetail();
+//                        materialDialog = new MaterialDialog.Builder(view.getContext())
+//                                .title("導覽員資訊")
+//                                .positiveText(R.string.confirm)
+//                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                                    @Override
+//                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                                        // TODO
+//                                    }
+//                                }).build();
+//                        try {
+//                            alertMessage += "姓名:" + obj.getString("name");
+//                            alertMessage += "\n電話: " + obj.getString("telphone");
+//                            alertMessage += "\n手機: " + obj.getString("cellphone");
+//                            alertMessage += "\nEmail: " + obj.getString("email");
+//                            alertMessage += "\n地址: " + obj.getString("user_address");
+//                            alertMessage += "\n社群帳號: " + obj.getString("social_id");
+//                            alertMessage += "\n導覽解說地區: " + obj.getString("docent_area");
+//                            alertMessage += "\n導覽解說使用語言: " + obj.getString("docent_language");
+//                            alertMessage += "\n收費標準: " + obj.getString("charge");
+//                            alertMessage += "\n自我介紹: " + obj.getString("introduction");
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                        materialDialog.setMessage(alertMessage);
+//                        materialDialog.show();
+//                    }
+//                });
+//			} catch (JSONException e) {
+//				e.printStackTrace();
+//			}
+//		}
 
 		mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 		String type = "LOI-Sequence";
 		String api = getResources().getString(R.string.api_loi_seq);
-		String url = api + "id=" + item.getLOIId() + "&did=" + globalVariable.getDeviceID()
+		String url = api + "id=" + model.getLOIId() + "&did=" + globalVariable.getDeviceID()
 				+ "&appver=mini200&ulat=22.9942&ulng=120.1659&clang=" + globalVariable.getLanguage();
 
 		Log.d("url", url);
@@ -112,14 +116,7 @@ public class LOIActivity extends AppCompatActivity implements TaskCompleted {
 
 		mRecyclerView.setHasFixedSize(true);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-		mRecyclerView.setAdapter(new LOISequenceAdapter(this, loiSequenceList));
-
-//		mAdapter = new DataAdapter(loiSequenceList, mRecyclerView);
-//
-//		// set the adapter object to the Recyclerview
-//		mRecyclerView.setAdapter(mAdapter);
-//		//	 mAdapter.notifyDataSetChanged();
-
+		mRecyclerView.setAdapter(new LOISequenceAdapter(this, loiSequenceList, type, model.getIdentifier()));
 
 
 	}
@@ -127,7 +124,11 @@ public class LOIActivity extends AppCompatActivity implements TaskCompleted {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_friend, menu);
+		getMenuInflater().inflate(R.menu.menu_poi_list, menu);
+		mMenu = menu;
+		menu.findItem(R.id.map).setVisible(false);
+		if(!model.getIdentifier().equals("docent"))
+			menu.findItem(R.id.narrator_info).setVisible(false);
 		return true;
 	}
 
@@ -143,6 +144,51 @@ public class LOIActivity extends AppCompatActivity implements TaskCompleted {
 			return true;
 		}
 
+		if (id == R.id.map) {
+			Intent intent = new Intent(this, MapActivity.class);
+			intent.putExtra("title", model.getLOIName());
+			intent.putExtra("POI-Sequence", loiSequenceList);
+			startActivity(intent);
+			return true;
+		}
+
+
+		if(id == R.id.narrator_info){
+			Log.d("test", "test" + model.getIdentifier());
+
+			if (model.getIdentifier().equals("docent")) {
+				MaterialDialog materialDialog;
+				String alertMessage = "";
+				JSONObject obj = model.getContributorDetail();
+				materialDialog = new MaterialDialog.Builder(LOIActivity.this)
+						.title("導覽員資訊")
+						.positiveText(R.string.confirm)
+						.onPositive(new MaterialDialog.SingleButtonCallback() {
+							@Override
+							public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+								// TODO
+							}
+						}).build();
+				try {
+					alertMessage += "姓名:" + obj.getString("name");
+					alertMessage += "\n電話: " + obj.getString("telphone");
+					alertMessage += "\n手機: " + obj.getString("cellphone");
+					alertMessage += "\nEmail: " + obj.getString("email");
+					alertMessage += "\n地址: " + obj.getString("user_address");
+					alertMessage += "\n社群帳號: " + obj.getString("social_id");
+					alertMessage += "\n導覽解說地區: " + obj.getString("docent_area");
+					alertMessage += "\n導覽解說使用語言: " + obj.getString("docent_language");
+					alertMessage += "\n收費標準: " + obj.getString("charge");
+					alertMessage += "\n自我介紹: " + obj.getString("introduction");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				materialDialog.setMessage(alertMessage);
+				materialDialog.show();
+			}
+			return true;
+		}
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -154,8 +200,9 @@ public class LOIActivity extends AppCompatActivity implements TaskCompleted {
 
 		} else if(globalVariable.getIp()!=null) {
 			if (type.equals("LOI-Sequence")) {
-				String result = Encryption.decode(this, response, globalVariable.getIp());
 
+				String result = Encryption.decode(this, response, globalVariable.getIp());
+				Log.d("test", result);
 				SaveLOISequence saveLOISequence = new SaveLOISequence(result);
 				loiSequenceList = saveLOISequence.getLOISequenceList();
 				for (int i = 0; i < loiSequenceList.size(); ++i) {
@@ -164,19 +211,20 @@ public class LOIActivity extends AppCompatActivity implements TaskCompleted {
 								.execute(getResources().getString(R.string.api_docent_info) + loiSequenceList.get(i).getContributor());
 					}
 				}
-				mAdapter = new LOISequenceAdapter(this, loiSequenceList);
+				mAdapter = new LOISequenceAdapter(this, loiSequenceList, type, model.getIdentifier());
 				mRecyclerView.setHasFixedSize(true);
 				mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 				mRecyclerView.setAdapter(mAdapter);
 
-				String hint = getString(R.string.find) + loiSequenceList.size() + getString(R.string.sites);
-				Snackbar.make(mRecyclerView, hint, Snackbar.LENGTH_SHORT)
-						.setAction("Action", null)
-						.show();
+				mMenu.findItem(R.id.map).setVisible(true);
+
+				String hint = getString(R.string.find) +  " " + loiSequenceList.size() +  " " + getString(R.string.sites);
+				Snackbar.make(mRecyclerView, hint, Snackbar.LENGTH_SHORT).show();
+
 			} else if (type.contains("contributor-detail")) {
 				String result = Encryption.decode(this, response, globalVariable.getIp());
 				try {
-					JSONObject obj = (JSONObject) (new JSONObject(result)).getJSONArray("results").getJSONObject(0);
+					JSONObject obj = (new JSONObject(result)).getJSONArray("results").getJSONObject(0);
 					int index = Integer.valueOf(type.substring("contributor-detail:".length()));
 
 					loiSequenceList.get(index).setContributorDetail(obj);

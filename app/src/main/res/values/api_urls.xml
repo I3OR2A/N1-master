@@ -56,4 +56,8 @@
         http://deh.csie.ncku.edu.tw/moe2/mobile_login_new.php?
     </item>
 
+    <item name="deh_email" type="string">
+        tinglongwei@gmail.com
+    </item>
+
 </resources>

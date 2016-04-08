@@ -73,25 +73,33 @@ public class POIAdapter extends RecyclerView.Adapter<POIAdapter.POIViewHolder> {
         final POIModel model = mModels.get(position);
         mDrawableBuilder = TextDrawable.builder()
                 .round();
-//        TextDrawable drawable = mDrawableBuilder.build(String.valueOf(model.getIdentifier().charAt(0)), mColorGenerator.getColor(model.getPOIName().charAt(0)));
-//
-//        if (model.getPOIPics().size() != 0) {
-//            Glide.with(mContext).load(model.getPOIPics().get(0)).bitmapTransform(new CropCircleTransformation(mContext)).into(holder.imageView);
-//        } else {
-//            Glide.clear(holder.imageView);
-//            holder.imageView.setImageDrawable(drawable);
-//        }
 
         String identifier, status = "";
         TextDrawable drawable = null;
-        if(mStatus.equals("MyPOI")){
-            if(model.getOpen().equals("1")) {
-                status = mContext.getResources().getString(R.string.open);
-                drawable = mDrawableBuilder.build(String.valueOf(status.charAt(0)), mContext.getResources().getColor(R.color.md_cyan_700));
+        if(mStatus!=null) {
+            if (mStatus.equals("MyPOI")) {
+                if (model.getOpen().equals("1")) {
+                    status = mContext.getResources().getString(R.string.open);
+                    drawable = mDrawableBuilder.build(String.valueOf(status.charAt(0)), mContext.getResources().getColor(R.color.md_cyan_700));
+                } else {
+                    status = mContext.getResources().getString(R.string.close);
+                    drawable = mDrawableBuilder.build(String.valueOf(status.charAt(0)), mContext.getResources().getColor(R.color.md_orange_400));
+                }
             }
             else {
-                status = mContext.getResources().getString(R.string.close);
-                drawable = mDrawableBuilder.build(String.valueOf(status.charAt(0)), mContext.getResources().getColor(R.color.md_orange_400));
+
+                if (model.getIdentifier().equals("expert")) {
+                    identifier = mContext.getString(R.string.expert);
+                    drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_indigo_500));
+
+                } else if (model.getIdentifier().equals("user")) {
+                    identifier = mContext.getString(R.string.user);
+                    drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_orange_500));
+
+                } else {
+                    identifier = mContext.getString(R.string.narrator);
+                    drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_purple_500));
+                }
             }
         }
         else {
@@ -112,23 +120,49 @@ public class POIAdapter extends RecyclerView.Adapter<POIAdapter.POIViewHolder> {
 
         holder.imageView.setImageDrawable(drawable);
 
-        if (model.getPOIPics().size() != 0) {
-            holder.mIcon.setImageDrawable(new IconicsDrawable(mContext)
-                    .icon(GoogleMaterial.Icon.gmd_image)
-                    .color(mContext.getResources().getColor(R.color.md_blue_grey_500))
-                    .sizeDp(18));
-        } else if(model.getPOIAudios().size() != 0){
-            holder.mIcon.setImageDrawable(new IconicsDrawable(mContext)
-                    .icon(GoogleMaterial.Icon.gmd_volume_up)
-                    .color(mContext.getResources().getColor(R.color.md_blue_grey_500))
-                    .sizeDp(18));
-        } else if(model.getPOIPMovies().size() != 0){
-            holder.mIcon.setImageDrawable(new IconicsDrawable(mContext)
-                    .icon(GoogleMaterial.Icon.gmd_videocam)
-                    .color(mContext.getResources().getColor(R.color.md_blue_grey_500))
-                    .sizeDp(18));
-        }else{
-            holder.mIcon.setImageDrawable(new IconicsDrawable(mContext)
+        holder.mIcon1.setVisibility(View.GONE);
+        holder.mIcon2.setVisibility(View.GONE);
+        holder.mIcon3.setVisibility(View.GONE);
+        holder.mIcon4.setVisibility(View.GONE);
+
+        if(!model.getMedia().isEmpty()) {
+            for (String media_format : model.getMedia()) {
+                switch (media_format) {
+                    case "photo":
+                        holder.mIcon1.setVisibility(View.VISIBLE);
+                        holder.mIcon1.setImageDrawable(new IconicsDrawable(mContext)
+                                .icon(GoogleMaterial.Icon.gmd_image)
+                                .color(mContext.getResources().getColor(R.color.md_blue_grey_500))
+                                .sizeDp(18));
+                        break;
+                    case "audio":
+                        holder.mIcon2.setVisibility(View.VISIBLE);
+                        holder.mIcon2.setImageDrawable(new IconicsDrawable(mContext)
+                                .icon(GoogleMaterial.Icon.gmd_volume_up)
+                                .color(mContext.getResources().getColor(R.color.md_blue_grey_500))
+                                .sizeDp(18));
+                        break;
+                    case "movie":
+                        holder.mIcon3.setVisibility(View.VISIBLE);
+                        holder.mIcon3.setImageDrawable(new IconicsDrawable(mContext)
+                                .icon(GoogleMaterial.Icon.gmd_videocam)
+                                .color(mContext.getResources().getColor(R.color.md_blue_grey_500))
+                                .sizeDp(18));
+                        break;
+                    case "audio tour":
+                        holder.mIcon4.setVisibility(View.VISIBLE);
+                        holder.mIcon4.setImageDrawable(new IconicsDrawable(mContext)
+                                .icon(GoogleMaterial.Icon.gmd_record_voice_over)
+                                .color(mContext.getResources().getColor(R.color.md_blue_grey_500))
+                                .sizeDp(18));
+                        break;
+                }
+            }
+
+        }
+        else {
+            holder.mIcon4.setVisibility(View.VISIBLE);
+            holder.mIcon4.setImageDrawable(new IconicsDrawable(mContext)
                     .icon(GoogleMaterial.Icon.gmd_place)
                     .color(mContext.getResources().getColor(R.color.md_blue_grey_500))
                     .sizeDp(18));
@@ -136,21 +170,12 @@ public class POIAdapter extends RecyclerView.Adapter<POIAdapter.POIViewHolder> {
 
         holder.poiTitle.setText(model.getPOIName());
         holder.poiInfo.setText(model.getPOIInfo());
-        holder.poiDistance.setText(model.getPOIDistance() + " " + mContext.getResources().getString(R.string.kilometer));
-
         holder.listItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (proxyService != null) {
-                    if (model.getOpen().equals("0")) {
-                        new MaterialDialog.Builder(mContext).title("此景點為私人景點")
-                                .content("此景點為私人景點，請聯絡導覽員:" + model.getContributor())
-                                .positiveText(mContext.getResources().getString(R.string.confirm))
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
-                                    }
-                                }).build().show();
-                    } else {
+                    Log.d("Contributor", model.getContributor());
+
                         proxyService.sendSinglePOI(model);
                         Intent intent = new Intent(view.getContext(), POIActivity.class);
                         Bundle bundle = new Bundle();
@@ -158,7 +183,7 @@ public class POIAdapter extends RecyclerView.Adapter<POIAdapter.POIViewHolder> {
                         bundle.putString("type", "Normal");
                         intent.putExtras(bundle);
                         view.getContext().startActivity(intent);
-                    }
+
                 }
             }
         });
@@ -227,12 +252,15 @@ public class POIAdapter extends RecyclerView.Adapter<POIAdapter.POIViewHolder> {
 
     public static class POIViewHolder extends RecyclerView.ViewHolder {
 
-        private final ImageView mIcon;
         private TextView poiTitle;
         private LinearLayout listItem;
         private ImageView imageView;
         private TextView poiDistance;
         private TextView poiInfo;
+        private ImageView mIcon1;
+        private ImageView mIcon2;
+        private ImageView mIcon3;
+        private ImageView mIcon4;
 
         public POIViewHolder(final View itemView) {
             super(itemView);
@@ -240,9 +268,13 @@ public class POIAdapter extends RecyclerView.Adapter<POIAdapter.POIViewHolder> {
             poiTitle = (TextView) itemView.findViewById(R.id.titleTextView);
             poiInfo = (TextView) itemView.findViewById(R.id.infoTextView);
             poiDistance = (TextView) itemView.findViewById(R.id.captionTextView);
-
+            poiDistance.setVisibility(View.GONE);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
-            mIcon = (ImageView) itemView.findViewById(R.id.captionIcon);
+            mIcon1 = (ImageView) itemView.findViewById(R.id.captionIcon1);
+            mIcon2 = (ImageView) itemView.findViewById(R.id.captionIcon2);
+            mIcon3 = (ImageView) itemView.findViewById(R.id.captionIcon3);
+            mIcon4 = (ImageView) itemView.findViewById(R.id.captionIcon4);
+
         }
 
     }

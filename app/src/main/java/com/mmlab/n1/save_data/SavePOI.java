@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * Created by waynewei on 2015/11/2.
  */
 public class SavePOI {
+
 	private ArrayList<POIModel> poiList;
 
 //	public SavePOI(String response) {
@@ -96,15 +97,19 @@ public class SavePOI {
 				poiModel.setPOIDistance(new DecimalFormat("#0.0").format(distance));
 				poiModel.setPOIAddress(object.getString("POI_address"));
 				poiModel.setPOISubject(object.getString("subject"));
-				poiModel.setPOIType1(object.getString("type1"));
+				poiModel.setPOIType1(object.getString("format"));
 
-				if(object.getString("identifier").equals("docent"))
+//				Log.d("test", object.getString("type1")+"");
+//				Log.d("test",result);
+				if(object.getString("identifier").equals("docent")||object.getString("identifier").equals("partner"))
 					poiModel.setIdentifier("narrator");
 				else
 					poiModel.setIdentifier(object.getString("identifier"));
 
-				poiModel.setContributor(object.getString("contributor"));
-				poiModel.setOpen(object.getString("open"));
+				Log.d("format", object.getString("format"));
+
+			poiModel.setContributor(object.getString("contributor"));
+			poiModel.setOpen(object.getString("open"));
 				ArrayList<String> poiKeywords = new ArrayList<>();
 
 				String keyword1 = object.getString("keyword1");
@@ -118,10 +123,10 @@ public class SavePOI {
 				String keyword5 = object.getString("keyword5");
 				if (!keyword5.isEmpty()) poiKeywords.add(keyword5);
 
-				poiModel.setPOIKeywords(poiKeywords);
+			poiModel.setPOIKeywords(poiKeywords);
 
-				poiModel.setPOILat(object.getString("latitude"));
-				poiModel.setPOILong(object.getString("longitude"));
+			poiModel.setPOILat(object.getDouble("latitude"));
+			poiModel.setPOILong(object.getDouble("longitude"));
 
 				poiModel.setPOISource(object.getString("POI_source"));
 
@@ -131,26 +136,53 @@ public class SavePOI {
 				ArrayList<String> pics = new ArrayList<>();
 				ArrayList<String> audios = new ArrayList<>();
 				ArrayList<String> movies = new ArrayList<>();
+				ArrayList<String> audio_tours = new ArrayList<>();
+				ArrayList<String> mediaFormat = new ArrayList<>();
 
 				for (int j = 0; j < pic.length(); j++) {
 					JSONObject obj = pic.getJSONObject(j);
 					String poiPicUrl = obj.getString("url");
+					int media_fmt = obj.getInt("media_fmt");
 					urls.add(poiPicUrl);
-					if (poiPicUrl.matches("^(.*\\.((jpg)$))?[^.]*$")) {
+//					if (poiPicUrl.matches("^(.*\\.((jpg)$))?[^.]*$")) {
+//						pics.add(poiPicUrl);
+//						poiModel.setMedia("photo");
+//					} else if (poiPicUrl.matches("^(.*\\.((aac)$))?[^.]*$")) {
+//						audios.add(poiPicUrl);
+//						poiModel.setMedia("audio");
+//					} else if (poiPicUrl.matches("^(.*\\.((mp4)$))?[^.]*$")) {
+//						movies.add(poiPicUrl);
+//						poiModel.setMedia("movie");
+//					}
+					if(media_fmt==1){
 						pics.add(poiPicUrl);
-						poiModel.setMedia("photo");
-					} else if (poiPicUrl.matches("^(.*\\.((aac)$))?[^.]*$")) {
+						mediaFormat.add("photo");
+//						poiModel.setMedia("photo");
+					}
+					else if(media_fmt == 2){
 						audios.add(poiPicUrl);
-						poiModel.setMedia("audio");
-					} else if (poiPicUrl.matches("^(.*\\.((mp4)$))?[^.]*$")) {
+						mediaFormat.add("audio");
+//						poiModel.setMedia("audio");
+					}
+					else if(media_fmt == 4){
 						movies.add(poiPicUrl);
-						poiModel.setMedia("movie");
+						mediaFormat.add("movie");
+//						poiModel.setMedia("movie");
+					}
+					else if(media_fmt == 8){
+						audio_tours.add(poiPicUrl);
+						mediaFormat.add("audio tour");
 					}
 				}
+
+				poiModel.setMedia(mediaFormat);
 				poiModel.setUrl(urls);
 				poiModel.setPOIPics(pics);
 				poiModel.setPOIAudios(audios);
 				poiModel.setPOIMovies(movies);
+				poiModel.setPOIAudioTours(audio_tours);
+
+				Log.d("poi", poiModel.getPOIName() + poiModel.getMedia() + " " + poiModel.getIdentifier());
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -165,6 +197,7 @@ public class SavePOI {
 			JSONObject jsonResponse = new JSONObject(response);
 			poiList = new ArrayList<>();
 			poiList.clear();
+
 			JSONArray results = jsonResponse.getJSONArray("results");
 			for (int i = 0; i < results.length(); i++) {
 				JSONObject poiObject = results.getJSONObject(i);

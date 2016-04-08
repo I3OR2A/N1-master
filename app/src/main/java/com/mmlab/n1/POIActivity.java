@@ -27,6 +27,8 @@ import com.bumptech.glide.Glide;
 import com.github.jorgecastilloprz.FABProgressCircle;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.melnykov.fab.FloatingActionButton;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mmlab.n1.constant.IDENTITY;
 import com.mmlab.n1.constant.PLAYBACK;
 import com.mmlab.n1.model.LOISequenceModel;
@@ -49,17 +51,18 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
 
     private String keyword;
     private String type;
-    private POIModel item;
+    private POIModel model;
     private LOISequenceModel loiSequence;
     private ImageView mPhoto;
     private TextView mSubject;
     private TextView mType1;
     private TextView mKeyword;
     private TextView mAddress;
-    private FloatingActionButton mAlbum;
     private TextView mInfo;
+    private FloatingActionButton mAlbum;
     private FloatingActionButton mAudio;
     private FloatingActionButton mMovie;
+    private FloatingActionButton mAudioTour;
     private FABProgressCircle fabProgressCircle;
     private AudioPlayer audioPlayer;
     private android.support.design.widget.FloatingActionButton mLike;
@@ -72,12 +75,13 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
     private ServerReceiver serverReceiver = null;
     private CollapsingToolbarLayout collapsingToolbar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poi);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -100,6 +104,7 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
         fabProgressCircle = (FABProgressCircle) findViewById(R.id.fabProgressCircle);
         mAudio = (FloatingActionButton) findViewById(R.id.audio);
         mMovie = (FloatingActionButton) findViewById(R.id.movie);
+        mAudioTour = (FloatingActionButton) findViewById(R.id.audio_tour);
 
         Bundle bundle = getIntent().getExtras();
         type = bundle.getString("type");
@@ -124,8 +129,8 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
                 new HttpAsyncTask(this, type).execute(url);
 
             } else {
-                item = getIntent().getParcelableExtra("POI-Content");
-                collapsingToolbar.setTitle(item.getPOIName());
+                model = getIntent().getParcelableExtra("POI-Content");
+                collapsingToolbar.setTitle(model.getPOIName());
                 loadData();
             }
         }
@@ -153,6 +158,14 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
             return true;
         }
 
+        if (id == R.id.location) {
+            Intent intent = new Intent(POIActivity.this, MapActivity.class);
+            intent.putExtra("title", model.getPOIName());
+            intent.putExtra("Single-POI", model);
+            startActivity(intent);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -162,30 +175,30 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
         Log.d("response", response);
         SavePOI savePOI = new SavePOI();
         savePOI.parsePoiListJSONObject(response);
-        item = savePOI.getPOIList().get(0);
+        model = savePOI.getPOIList().get(0);
         ProxyService proxyService = new ProxyService();
-        proxyService.sendSinglePOI(item);
+        proxyService.sendSinglePOI(model);
         loadData();
     }
 
 
     private void loadData() {
-        collapsingToolbar.setTitle(item.getPOIName());
+        collapsingToolbar.setTitle(model.getPOIName());
 
-        mSubject.setText(item.getPOISubject());
-        mType1.setText(item.getPOIType1());
+        mSubject.setText(model.getPOISubject());
+        mType1.setText(model.getPOIType1());
 
-        for (String i : item.getPOIKeywords()) {
+        for (String i : model.getPOIKeywords()) {
             keyword = i;
         }
 
         mKeyword.setText(keyword);
 
-        mAddress.setText(item.getPOIAddress());
-        mInfo.setText(item.getPOIInfo());
+        mAddress.setText(model.getPOIAddress());
+        mInfo.setText(model.getPOIInfo());
 
         final RealmResults<MyFavorite> result = realm.where(MyFavorite.class)
-                .equalTo("id", item.getPOIId())
+                .equalTo("id", model.getPOIId())
                 .findAll();
 
         if (!result.isEmpty()) {
@@ -201,10 +214,10 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
                     realm.beginTransaction();
                     final MyFavorite myFavorite = realm.createObject(MyFavorite.class);
 
-                    myFavorite.setId(item.getPOIId());
-                    myFavorite.setTitle(item.getPOIName());
-                    if (!item.getPOIPics().isEmpty())
-                        myFavorite.setPic(item.getPOIPics().get(0));
+                    myFavorite.setId(model.getPOIId());
+                    myFavorite.setTitle(model.getPOIName());
+                    if (!model.getPOIPics().isEmpty())
+                        myFavorite.setPic(model.getPOIPics().get(0));
 
                     realm.commitTransaction();
 
@@ -233,8 +246,10 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
             }
         });
 
-        if (item.getPOIPics().size() != 0) {
-            Glide.with(this).load(item.getPOIPics().get(0)).into(mPhoto);
+
+
+        if (model.getPOIPics().size() != 0) {
+            Glide.with(this).load(model.getPOIPics().get(0)).into(mPhoto);
             if (Preset.loadPreferences(getApplicationContext()) == IDENTITY.PROXY) {
                 mAlbum.setVisibility(View.VISIBLE);
                 mAlbum.setOnClickListener(new View.OnClickListener() {
@@ -247,7 +262,7 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
 
                         Intent intent = new Intent(POIActivity.this, AlbumActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable("Pics", item.getPOIPics());
+                        bundle.putSerializable("Pics", model.getPOIPics());
                         intent.putExtras(bundle);
                         startActivityForResult(intent, UPDATE_PHOTO);
                     }
@@ -260,7 +275,7 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
 
         final CircularProgressView progressView = (CircularProgressView) findViewById(R.id.loading_progress);
         final FrameLayout mFrame = (FrameLayout) findViewById(R.id.frame);
-        if (item.getPOIAudios().size() != 0 && Preset.loadPreferences(getApplicationContext()) == IDENTITY.PROXY) {
+        if (model.getPOIAudios().size() != 0 && Preset.loadPreferences(getApplicationContext()) == IDENTITY.PROXY) {
             mAudio.setVisibility(View.VISIBLE);
             mAudio.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -272,7 +287,7 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
 //						audioPlayer.playAudio();
 //					}
                     Intent intent = new Intent(POIActivity.this, VideoDemoActivity.class);
-                    PLAYBACK.remoteUri = item.getPOIAudios().get(0).replace("moe2//", "");
+                    PLAYBACK.remoteUri = model.getPOIAudios().get(0).replace("moe2//", "");
                     startActivityForResult(intent, UPDATE);
                 }
             });
@@ -291,19 +306,35 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
             mFrame.setVisibility(View.GONE);
         }
 
-        if (item.getPOIPMovies().size() != 0 && Preset.loadPreferences(getApplicationContext()) == IDENTITY.PROXY) {
+        if (model.getPOIPMovies().size() != 0 && Preset.loadPreferences(getApplicationContext()) == IDENTITY.PROXY) {
             mMovie.setVisibility(View.VISIBLE);
             mMovie.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(POIActivity.this, VideoDemoActivity.class);
-                    PLAYBACK.remoteUri = item.getPOIPMovies().get(0).replace("moe2//", "");
+                    PLAYBACK.remoteUri = model.getPOIPMovies().get(0).replace("moe2//", "");
                     startActivityForResult(intent, UPDATE);
                 }
             });
         } else {
             mMovie.setVisibility(View.GONE);
         }
+
+        if (model.getPOIAudioTours().size() != 0 && Preset.loadPreferences(getApplicationContext()) == IDENTITY.PROXY) {
+            mAudioTour.setVisibility(View.VISIBLE);
+            mAudioTour.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(POIActivity.this, VideoDemoActivity.class);
+                    PLAYBACK.remoteUri = model.getPOIAudioTours().get(0).replace("moe2//", "");
+                    startActivityForResult(intent, UPDATE);
+                }
+            });
+
+        } else {
+            mAudioTour.setVisibility(View.GONE);
+        }
+
     }
 
     ServiceConnection serverConnection = new ServiceConnection() {
@@ -362,7 +393,7 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
         public void onReceive(Context context, Intent intent) {
             if (MemberService.CONNECT_ACTION.equals(intent.getAction())) {
                 if (intent.getIntExtra("show", Package.SHOW_NONE) == Package.SHOW_AUTO) {
-                    item = mClient.getCurPOI();
+                    model = mClient.getCurPOI();
 
                     loadData();
                 }
@@ -372,7 +403,7 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
             } else if (MemberService.PHOTO_START_ACTION.equals(intent.getAction())) {
                 Intent intent1 = new Intent(getApplicationContext(), AlbumActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("Pics", item.getPOIPics());
+                bundle.putSerializable("Pics", model.getPOIPics());
                 intent1.putExtras(bundle);
                 startActivityForResult(intent1, PHOTO);
             }
@@ -414,7 +445,7 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
                     Log.d("UUUUUUUUPDATE", mClient.getCurPOI().getPOIName());
                 try {
                     if (data.getIntExtra("show", Package.SHOW_NONE) == Package.SHOW_AUTO) {
-                        item = mClient.getCurPOI();
+                        model = mClient.getCurPOI();
                         loadData();
                     }
                 } catch (NullPointerException e) {
@@ -423,13 +454,13 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
                 break;
             case VIDEO:
                 Intent intent = new Intent(POIActivity.this, VideoDemoActivity.class);
-                PLAYBACK.remoteUri = item.getPOIPMovies().get(0).replace("moe2//", "");
+                PLAYBACK.remoteUri = model.getPOIPMovies().get(0).replace("moe2//", "");
                 startActivityForResult(intent, VIDEO);
                 break;
             case PHOTO:
                 intent = new Intent(getApplicationContext(), AlbumActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("Pics", item.getPOIPics());
+                bundle.putSerializable("Pics", model.getPOIPics());
                 intent.putExtras(bundle);
                 startActivityForResult(intent, PHOTO);
                 break;

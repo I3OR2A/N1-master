@@ -43,9 +43,27 @@
                 android:textSize="18sp"/>
 
             <ImageView
-                android:id="@+id/captionIcon"
+                android:id="@+id/captionIcon1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+            <ImageView
+                android:id="@+id/captionIcon2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center"/>
+            <ImageView
+                android:id="@+id/captionIcon3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center"/>
+            <ImageView
+                android:id="@+id/captionIcon4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_gravity="center"/>
 
             <TextView

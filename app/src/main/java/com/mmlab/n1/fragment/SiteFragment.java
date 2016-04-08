@@ -1,7 +1,9 @@
 package com.mmlab.n1.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -105,7 +107,6 @@ public class SiteFragment extends Fragment {
 
         globalVariable = (MyApplication) getActivity().getApplicationContext();
         globalVariable.getCurrentLocation();
-
         return layout_site;
     }
 

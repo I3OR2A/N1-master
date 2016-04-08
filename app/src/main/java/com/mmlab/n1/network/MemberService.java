@@ -49,7 +49,6 @@ public class MemberService extends Service {
     /**
      * V2 End
      **/
-
     private MemberBinder binder = new MemberBinder();
     public static ClientThread clientThread = null;
 

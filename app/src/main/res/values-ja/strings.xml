@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Narrator</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_splash">SplashActivity</string>
@@ -9,49 +8,48 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="one">One</string>
-    <string name="group">Group</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="site">Site</string>
     <string name="settings">Settings</string>
-    <string name="title_dialog_identity">Choosing Identity</string>
-    <string name="message_dialog_identity">Identity Option</string>
+    <string name="title_dialog_identity">選択アイデンティティ</string>
+    <string name="message_dialog_identity">アイデンティティ オプション</string>
 
-    <string name="title_dialog_network">Internet Connection</string>
-    <string name="title_dialog_group">Add Group</string>
-    <string name="confirm">Confirm</string>
-    <string name="cancel">Cancel</string>
+    <string name="title_dialog_network">インターネット接続</string>
+    <string name="title_dialog_group">グループの追加</string>
+    <string name="confirm">確認</string>
+    <string name="cancel">キャンセル</string>
 
-    <string name="drawer_item_home">Home</string>
-    <string name="drawer_item_sign_in">Sign In</string>
-    <string name="drawer_item_help">Help</string>
-    <string name="drawer_item_contact">Contact</string>
-    <string name="drawer_item_friends">Friends</string>
-    <string name="drawer_item_favorite">Favorite</string>
-    <string name="logout_detail">Are you sure you want to log out</string>
-    <string name="logout_title">Log Out</string>
+    <string name="drawer_item_home">ホーム</string>
+    <string name="drawer_item_sign_in">サインイン</string>
+    <string name="drawer_item_help">支援</string>
+    <string name="drawer_item_contact">連絡</string>
+    <string name="drawer_item_friends">友達</string>
+    <string name="drawer_item_favorite">お気に入り</string>
+    <string name="logout_detail">サインアウトの確認をしたいのですか</string>
+    <string name="logout_title">サインアウト</string>
 
-    <string name="region">Region</string>
+    <string name="region">スコープ</string>
     <string name="meter">m</string>
     <string name="kilometer">km</string>
-    <string name="number">Number</string>
+    <string name="number">数量</string>
     <string name="unit"></string>
-    <string name="search_settings">DEH Search Settings</string>
-    <string name="search">Search</string>
-    <string name="poi">Nearby POI</string>
-    <string name="loi">Nearby LOI</string>
-    <string name="aoi">Nearby AOI</string>
-    <string name="mypoi">My POI</string>
-    <string name="myloi">MY LOI</string>
-    <string name="myaoi">My AOI</string>
+    <string name="search_settings">DEH 探索設定</string>
+    <string name="search">探索</string>
+    <string name="poi">近所のポイント</string>
+    <string name="loi">近所のライン</string>
+    <string name="aoi">近所のエリア</string>
+    <string name="mypoi">私のポイント</string>
+    <string name="myloi">私のライン</string>
+    <string name="myaoi">私のエリア</string>
 
-    <string name="subject">Subject</string>
-    <string name="type1">Type</string>
-    <string name="keyword">Keyword</string>
-    <string name="address">Address</string>
-    <string name="info">Info</string>
-    <string name="album">Album</string>
+    <string name="subject">テーマ</string>
+    <string name="type1">種類</string>
+    <string name="keyword">キーワード</string>
+    <string name="address">住所</string>
+    <string name="info">紹介</string>
+    <string name="album">アルバム</string>
 
-    <string name="title_dialog_hotspot">Setting Wi-Fi Hotspot</string>
+    <string name="title_dialog_hotspot">Wi-Fiテザリング設定</string>
     <string name="save">Save</string>
 
     <string name="title_activity_poi">POIActivity</string>
@@ -62,7 +60,7 @@
     <string name="action_anchor_enable">Enable Anchor Point</string>
     <string name="action_anchor_disable">Disable Anchor Point</string>
 
-    <string name="no_internet_title">No Internet</string>
+    <string name="no_internet_title">インターネット無し</string>
     <string name="internet_detail">Open Internet settings</string>
     <string name="add_to_favorite">Add to favorite success</string>
     <string name="cancel_add_to_favorite">Remove from favorite</string>
@@ -124,58 +122,58 @@
     <string name="title_activity_poinew">POINewActivity</string>
     <string name="title_activity_intro">IntroActivity</string>
 
-    <string name="expert">Expert</string>
-    <string name="user">User</string>
-    <string name="narrator">Narrator</string>
+    <string name="expert">達人</string>
+    <string name="user">使用者</string>
+    <string name="narrator">ナレーター</string>
 
-    <string name="group_tour">Group Tour</string>
-    <string name="member">Member</string>
-    <string name="personal_tour">Personal tour</string>
-    <string name="personal">Personal</string>
-    <string name="travel_tour">Travel Tour</string>
-    <string name="historical_sites">Historical Sites</string>
-    <string name="instant_sharing">Instant Sharing</string>
+    <string name="group_tour">団体のツアー</string>
+    <string name="member">成員</string>
+    <string name="personal_tour">個々のツアー</string>
+    <string name="personal">個人</string>
+    <string name="travel_tour">旅行ツアー</string>
+    <string name="historical_sites">史跡</string>
+    <string name="instant_sharing">そくじ共有</string>
     <string name="ssid">SSID</string>
-    <string name="security">Security</string>
-    <string name="password">Password</string>
-    <string name="show_password">Show Password</string>
+    <string name="security">セキュリティ</string>
+    <string name="password">パスワード</string>
+    <string name="show_password">パスワードを表示</string>
     <string name="password_notice">Password should be at least 8 characters</string>
     <string name="open">Public</string>
     <string name="close">Private</string>
     <string name="filter">Filter</string>
-    <string name="identifier">Identifier</string>
-    <string name="media">Media</string>
-    <string name="category">Format</string>
-    <string name="deh_sign_in">DEH Log In</string>
-    <string name="account">Account</string>
-    <string name="deh_logout">DEH Account Log Out</string>
+    <string name="identifier">識別</string>
+    <string name="media">メディア</string>
+    <string name="category">種類</string>
+    <string name="deh_sign_in">文史脈流 ログイン</string>
+    <string name="account">アカウント</string>
+    <string name="deh_logout">文史脈流 サインアウト</string>
     <string name="deh_logout_detail">Are you sure you want to log out ?</string>
     <string name="login_success">Log In Success</string>
     <string name="login_failure">Log In Failure</string>
     <string name="no_deh_login">Not log into DEH yet</string>
-    <string name="find">Find</string>
-    <string name="sites">sites</string>
-    <string name="lines">lines</string>
-    <string name="areas">areas</string>
+    <string name="find">見つける</string>
+    <string name="sites">観光名所</string>
+    <string name="lines">ライン</string>
+    <string name="areas">エリア</string>
     <string name="not_match">Can\'t find any sites that match the condition</string>
-    <string name="reset">Reset</string>
+    <string name="reset">リセット</string>
     <string name="narrator_info">Narrator Info</string>
     <string name="update_friends">Update Friends</string>
     <string name="title_activity_contact">ContactActivity</string>
-    <string name="send_email">Send email &#8230;</string>
+    <string name="send_email">メールを送る &#8230;</string>
     <string name="no_email_client">There are no email clients installed</string>
-    <string name="feedback">Feedback</string>
+    <string name="feedback">反応</string>
     <string name="title_activity_map">MapActivity</string>
-    <string name="map">Map</string>
+    <string name="map">地図</string>
     <string name="location">Location</string>
     <string name="no_gps_title">Can\'t get the current location</string>
     <string name="open_gps_setting">Turn on the GPS</string>
 
-    <string name="clear">Clear All</string>
-    <string name="clear_detail">Are you sure you want to clear all favorites?</string>
-    <string name="clear_all">Clear finished</string>
-    <string name="empty">No sites add into My Favorite</string>
-    <string name="exit">Backpress one more time to exit</string>
+    <string name="clear">全部削除</string>
+    <string name="clear_detail">全部削除の確認をしたいのですか?</string>
+    <string name="clear_all">削除しました。</string>
+    <string name="empty">空ける</string>
+    <string name="exit">もう一度押すと終了します</string>
 
 
 </resources>

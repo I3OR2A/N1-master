@@ -16,8 +16,9 @@
     <string-array name="sorting_media">
         <item name="all">全部</item>
         <item name="photo">相片</item>
-        <item name="movie">影片</item>
+        <item name="video">影片</item>
         <item name="audio">聲音</item>
+        <item name="audio_tour">語音導覽</item>
     </string-array>
 
     <string-array name="sorting_category">

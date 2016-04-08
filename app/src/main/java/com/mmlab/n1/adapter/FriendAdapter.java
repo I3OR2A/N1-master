@@ -59,6 +59,15 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
 		return friends.size();
 	}
 
+
+	public void updateItems(ArrayList<Friend> friends) {
+		this.friends = new ArrayList<>();
+		this.friends.clear();
+		this.friends.addAll(friends);
+		notifyDataSetChanged();
+
+	}
+
 	static class FriendViewHolder extends RecyclerView.ViewHolder {
 
 		private final TextView mName;

@@ -20,19 +20,20 @@ public class POIModel implements Parcelable {
 	private String mPOIType1;
 	private String mPOIAddress;
 	private String mPOIInfo;
-	private String mPOILat;
-	private String mPOILong;
+	private Double mPOILat;
+	private Double mPOILong;
 	private String mPOIPeriod;
 	private String mPOISource;
 	private String mIdentifier;
 	private String mContributor;
 	private String mOpen;
-	private String mMedia;
+	private ArrayList<String> mMedia;
 	private ArrayList<String> mPOIKeyWords;
 	private ArrayList<String> mUrl;
 	private ArrayList<String> mPOIPics;
 	private ArrayList<String> mPOIAudios;
 	private ArrayList<String> mPOIMovies;
+	private ArrayList<String> mPOIAudioTours;
 	private String jsonObject;
 
 
@@ -56,7 +57,7 @@ public class POIModel implements Parcelable {
 //		mPOIMovies = poiMovies;
 //	}
 
-	public POIModel() {
+	public POIModel(){
 
 	}
 
@@ -68,19 +69,20 @@ public class POIModel implements Parcelable {
 		mPOIType1 = in.readString();
 		mPOIAddress = in.readString();
 		mPOIInfo = in.readString();
-		mPOILat = in.readString();
-		mPOILong = in.readString();
+		mPOILat = in.readDouble();
+		mPOILong = in.readDouble();
 		mPOIPeriod = in.readString();
 		mPOISource = in.readString();
 		mIdentifier = in.readString();
 		mContributor = in.readString();
 		mOpen = in.readString();
-		mMedia = in.readString();
+		mMedia = in.createStringArrayList();
 		mPOIKeyWords = in.createStringArrayList();
 		mUrl = in.createStringArrayList();
 		mPOIPics = in.createStringArrayList();
 		mPOIAudios = in.createStringArrayList();
 		mPOIMovies = in.createStringArrayList();
+		mPOIAudioTours = in.createStringArrayList();
 		jsonObject = in.readString();
 	}
 
@@ -112,52 +114,12 @@ public class POIModel implements Parcelable {
 		return mPOIName;
 	}
 
-	public void setPOILat(String poiLat) {
-		mPOILat = poiLat;
-	}
-
-	public String getPOILat() {
-		return mPOILat;
-	}
-
-	public void setPOILong(String poiLong) {
-		mPOILat = poiLong;
-	}
-
-	public String getPOILong() {
-		return mPOILong;
-	}
-
 	public void setPOIDistance(String poiDistance) {
 		mPOIDistance = poiDistance;
 	}
 
 	public String getPOIDistance() {
 		return mPOIDistance;
-	}
-
-	public void setPOIKeywords(ArrayList<String> poiKeywords) {
-		mPOIKeyWords = poiKeywords;
-	}
-
-	public ArrayList<String> getPOIKeywords() {
-		return mPOIKeyWords;
-	}
-
-	public void setPOIInfo(String poiInfo) {
-		mPOIInfo = poiInfo;
-	}
-
-	public String getPOIInfo() {
-		return mPOIInfo;
-	}
-
-	public void setPOIPeriod(String poiPeriod) {
-		mPOIPeriod = poiPeriod;
-	}
-
-	public String getPOIPeriod() {
-		return mPOIPeriod;
 	}
 
 	public void setPOISubject(String poiSubject) {
@@ -179,10 +141,51 @@ public class POIModel implements Parcelable {
 	public void setPOIAddress(String poiAddress) {
 		mPOIAddress = poiAddress;
 	}
-	
+
 	public String getPOIAddress() {
 		return mPOIAddress;
 	}
+
+	public void setPOIInfo(String poiInfo) {
+		mPOIInfo = poiInfo;
+	}
+
+	public String getPOIInfo() {
+		return mPOIInfo;
+	}
+
+	public void setPOILat(Double poiLat) {
+		mPOILat = poiLat;
+	}
+
+	public Double getPOILat() {
+		return mPOILat;
+	}
+
+	public void setPOILong(Double poiLong) {
+		mPOILong = poiLong;
+	}
+
+	public Double getPOILong() {
+		return mPOILong;
+	}
+
+	public void setPOIKeywords(ArrayList<String> poiKeywords) {
+		mPOIKeyWords = poiKeywords;
+	}
+
+	public ArrayList<String> getPOIKeywords() {
+		return mPOIKeyWords;
+	}
+
+	public void setPOIPeriod(String poiPeriod) {
+		mPOIPeriod = poiPeriod;
+	}
+
+	public String getPOIPeriod() {
+		return mPOIPeriod;
+	}
+
 
 	public void setIdentifier(String identifier) { mIdentifier = identifier; }
 
@@ -196,9 +199,9 @@ public class POIModel implements Parcelable {
 
 	public String getOpen() { return mOpen; }
 
-	public void setMedia(String media) { mMedia = media; }
+	public void setMedia(ArrayList<String> media) { mMedia = media; }
 
-	public String getMedia() { return mMedia; }
+	public ArrayList<String> getMedia() { return mMedia; }
 
 	public void setPOISource(String poiSource) {
 		mPOISource = poiSource;
@@ -240,6 +243,14 @@ public class POIModel implements Parcelable {
 		return mPOIMovies;
 	}
 
+	public void setPOIAudioTours(ArrayList<String> poiAudioTours) {
+		mPOIAudioTours = poiAudioTours;
+	}
+
+	public ArrayList<String> getPOIAudioTours() {
+		return mPOIAudioTours;
+	}
+
 	public void setJsonObject(JSONObject jsonObject) {
 		this.jsonObject = jsonObject.toString();
 	}
@@ -252,7 +263,6 @@ public class POIModel implements Parcelable {
 		}
 		return new JSONObject();
 	}
-
 
 	@Override
 	public int describeContents() {
@@ -268,19 +278,20 @@ public class POIModel implements Parcelable {
 		dest.writeString(mPOIType1);
 		dest.writeString(mPOIAddress);
 		dest.writeString(mPOIInfo);
-		dest.writeString(mPOILat);
-		dest.writeString(mPOILong);
+		dest.writeDouble(mPOILat);
+		dest.writeDouble(mPOILong);
 		dest.writeString(mPOIPeriod);
 		dest.writeString(mPOISource);
 		dest.writeString(mIdentifier);
 		dest.writeString(mContributor);
 		dest.writeString(mOpen);
-		dest.writeString(mMedia);
+		dest.writeStringList(mMedia);
 		dest.writeStringList(mPOIKeyWords);
 		dest.writeStringList(mUrl);
 		dest.writeStringList(mPOIPics);
 		dest.writeStringList(mPOIAudios);
 		dest.writeStringList(mPOIMovies);
+		dest.writeStringList(mPOIAudioTours);
 		dest.writeString(jsonObject);
 	}
 }

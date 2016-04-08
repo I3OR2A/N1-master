@@ -70,7 +70,7 @@ public class FilterDialog extends DialogFragment {
         mediaAdapter.setDropDownViewResource(R.layout.row_spn_dropdown);
         mMedia.setAdapter(mediaAdapter);
         mMedia.setSelection(Preset.loadMediaPreferences(getActivity().getApplicationContext()));
-        final String arrayMedia[] = {"all", "photo", "movie", "audio"};
+        final String arrayMedia[] = {"all", "photo", "movie", "audio", "audio tour"};
         mMedia.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(Spinner parent, View view, int position, long id) {
@@ -82,6 +82,8 @@ public class FilterDialog extends DialogFragment {
         categoryAdapter.setDropDownViewResource(R.layout.row_spn_dropdown);
         mCategory.setAdapter(categoryAdapter);
         mCategory.setSelection(Preset.loadCategoryPreferences(getActivity().getApplicationContext()));
+        final String arrayCategory[] = {"all", "古蹟、歷史建築、聚落", "遺址", "人文景觀", "自然景觀",
+                "傳統藝術", "民俗及有關文物", "古物", "食衣住行育樂", "其他"};
         mCategory.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(Spinner parent, View view, int position, long id) {
@@ -91,7 +93,7 @@ public class FilterDialog extends DialogFragment {
 
 
         return new MaterialDialog.Builder(getActivity())
-                .title(R.string.sort)
+                .title(R.string.filter)
                 .customView(view, true)
                 .widgetColor(getResources().getColor(R.color.colorPrimary))
                 .positiveText(R.string.confirm)
@@ -105,10 +107,10 @@ public class FilterDialog extends DialogFragment {
                         Preset.saveMediaPreferences(getActivity().getApplicationContext(), mMedia.getSelectedItemPosition());
                         media = arrayMedia[mMedia.getSelectedItemPosition()];
                         Preset.saveCategoryPreferences(getActivity().getApplicationContext(), mCategory.getSelectedItemPosition());
-                        category = categoryAdapter.getItem(mCategory.getSelectedItemPosition());
-                        if (mCategory.getSelectedItemPosition() == 0) {
-                            category = "all";
-                        }
+                        category =  arrayCategory[mCategory.getSelectedItemPosition()];
+//                        if (mCategory.getSelectedItemPosition() == 0) {
+//                            category = "all";
+//                        }
                         ((MainActivity) getActivity()).startFilter(identifier, media, category);
                     }
                 })
@@ -118,6 +120,9 @@ public class FilterDialog extends DialogFragment {
                         mIdentifier.setSelection(0);
                         mMedia.setSelection(0);
                         mCategory.setSelection(0);
+                        Preset.saveIndentifierPreferences(getActivity().getApplicationContext(), 0);
+                        Preset.saveMediaPreferences(getActivity().getApplicationContext(), 0);
+                        Preset.saveCategoryPreferences(getActivity().getApplicationContext(), 0);
                     }
                 })
                 .build();

@@ -18,19 +18,8 @@
     <string name="cancel">取消</string>
     <string name="logout_detail">確定要登出嗎？</string>
     <string name="logout_title">登出</string>
-
-
-    <string name="drawer_item_group">群組</string>
     <string name="drawer_item_friends">朋友</string>
     <string name="drawer_item_favorite">我的最愛</string>
-
-    <string name="choose">Choose</string>
-
-    <string-array name="group_list">
-        <item>Public</item>
-        <item>Friend</item>
-        <item>Member</item>
-    </string-array>
 
     <string name="title_activity_poi">POI</string>
     <string name="region">範圍</string>
@@ -94,23 +83,31 @@
     <string name="password_notice">密碼最少需要包含八個字元</string>
     <string name="open">公開</string>
     <string name="close">私有</string>
-    <string name="sort">排序</string>
+    <string name="filter">篩選</string>
     <string name="identifier">級別</string>
     <string name="media">媒體類別</string>
     <string name="category">範疇</string>
     <string name="deh_sign_in">文史脈流 登入</string>
-    <string name="showPassword">顯示密碼</string>
     <string name="account">帳號</string>
     <string name="deh_logout">文史脈流 登出</string>
     <string name="deh_logout_detail">你確定要登出嗎?</string>
     <string name="login_success">成功登入</string>
     <string name="login_failure">帳號 或 密碼 錯誤</string>
     <string name="no_deh_login">尚未登入 文史脈流</string>
-    <string name="find">找到 </string>
-    <string name="sites"> 個景點</string>
-    <string name="lines"> 條景線</string>
-    <string name="areas"> 個景區</string>
+    <string name="find">找到</string>
+    <string name="sites">個景點</string>
+    <string name="lines">條景線</string>
+    <string name="areas">個景區</string>
     <string name="not_match">找不到任何符合條件的景點</string>
     <string name="reset">重置</string>
+    <string name="narrator_info">導覽員資訊</string>
+    <string name="update_friends">更新好友</string>
+    <string name="send_email">發電子郵件 &#8230;</string>
+    <string name="no_email_client">尚未安裝任何可收發電子郵件的軟體</string>
+    <string name="feedback">意見回饋</string>
+    <string name="map">地圖</string>
+    <string name="location">位置</string>
+    <string name="no_gps_title">無法取得目前位置</string>
+    <string name="open_gps_setting">開啟GPS設定</string>
 
 </resources>

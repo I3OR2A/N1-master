@@ -6,9 +6,9 @@
     </string-array>
 
     <array name="narrator_setting">
-        <item name="public_hotspot">Public Hotspot</item>
-        <item name="friends_only">Friends Only</item>
-        <item name="limit_access">Limit Access</item>
+        <item name="public_hotspot">公共のホットスポット</item>
+        <item name="friends_only">友達のみ</item>
+        <item name="limit_access">アクセスを制限します</item>
     </array>
 
     <string-array name="syncFrequency">
@@ -83,22 +83,22 @@
     <string-array name="empty_array"/>
 
     <string-array name="sorting_identifier">
-        <item name="all">All</item>
-        <item name="expert">Expert</item>
-        <item name="user">User</item>
-        <item name="narrator">Narrator</item>
+        <item name="all">全部</item>
+        <item name="expert">達人</item>
+        <item name="user">使用者</item>
+        <item name="narrator">ナレーター</item>
     </string-array>
 
     <string-array name="sorting_media">
-        <item name="all">All</item>
-        <item name="photo">Photo</item>
-        <item name="video">Video</item>
-        <item name="audio">Audio</item>
-        <item name="audio_tour">Audio Tour</item>
+        <item name="all">全部</item>
+        <item name="photo">写真</item>
+        <item name="video">ビデオ</item>
+        <item name="audio">サウンド</item>
+        <item name="audio_tour">オーディオツアー</item>
     </string-array>
 
     <string-array name="sorting_category">
-        <item name="all">All</item>
+        <item name="all">全部</item>
         <item name="historic_relics">Historic Relics</item>
         <item name="historical_sites">Historical Sites</item>
         <item name="cultural_sites">Human Landscape</item>
@@ -107,6 +107,6 @@
         <item name="custom_objects">Custom Objects</item>
         <item name="ancient_stuffs">Ancient Stuffs</item>
         <item name="necessities_of_life">Necessities Of Life</item>
-        <item name="other">Other</item>
+        <item name="other">その他</item>
     </string-array>
 </resources>

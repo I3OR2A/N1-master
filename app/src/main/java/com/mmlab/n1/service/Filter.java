@@ -55,10 +55,13 @@ public class Filter {
 
 		final ArrayList<POIModel> filteredModelList = new ArrayList<>();
 		for (POIModel model : models) {
-			if (model.getMedia()!=null){
-				final String text = model.getMedia().toLowerCase();
-				if (text.equals(query.toLowerCase())) {
-					filteredModelList.add(model);
+			if (!model.getMedia().isEmpty()){
+				for(String media_format : model.getMedia()) {
+					final String text = media_format.toLowerCase();
+					if (text.equals(query.toLowerCase())) {
+						filteredModelList.add(model);
+						break;
+					}
 				}
 			}
 		}

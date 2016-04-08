@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/map"
+          android:icon="@drawable/ic_map_white_24dp"
+          android:title="@string/map"
+          app:showAsAction="always"/>
+
+    <item android:id="@+id/narrator_info"
+          android:icon="@drawable/ic_info_white_24dp"
+          android:title="@string/narrator_info"
+          app:showAsAction="always"/>
+</menu>

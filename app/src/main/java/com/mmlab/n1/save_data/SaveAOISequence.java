@@ -28,11 +28,14 @@ public class SaveAOISequence {
 				JSONObject object = results.getJSONObject(i);
 				String poiId = object.getString("POIid");
 				String poiTitle = object.getString("POItitle");
+				Double poiLat = object.getDouble("latitude");
+				Double poiLong = object.getDouble("longitude");
 				String poiDescription = object.getString("description");
 				String open = object.getString("open");
 				String contributor = object.getString("rights");
 				String identifier = object.getString("identifier");
-				aoiSequenceList.add(new LOISequenceModel(poiId, poiTitle, poiDescription, open, contributor, identifier));
+				int mediaFormat = object.getInt("POI_media_fmt");
+				aoiSequenceList.add(new LOISequenceModel(poiId, poiTitle, poiLat, poiLong, poiDescription, open, contributor, identifier, mediaFormat));
 				Log.d("LOISequence", poiId + " " + poiTitle);
 			}
 

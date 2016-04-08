@@ -153,13 +153,17 @@ public class SignInActivity extends AppCompatActivity {
 
 
                             info.setText("Welcome " + userName);
+                            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                     intent.putExtra("refresh_drawer", true);
+                                    intent.putExtra("login_success", "Login Success");
+                                    setResult(RESULT_OK,intent);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -251,8 +255,7 @@ public class SignInActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            finish();
             return true;
         }
 

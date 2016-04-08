@@ -16,25 +16,38 @@ public class LOISequenceModel implements Parcelable{
 
     private String mPOIId;
     private String mPOIName;
+    private Double mPOILat;
+    private Double mPOILong;
     private String mPOIDescription;
     private String mContributor;
     private String mOpen;
     private String mIdentifier;
+    private int mMediaFormat;
     private JSONObject mContributorDetail;
 
-    public LOISequenceModel(String poiId, String poiName, String poiDescription, String open, String contributor, String identifier) {
+    public LOISequenceModel(String poiId, String poiName, Double poiLat, Double poiLong, String poiDescription, String open, String contributor, String identifier, int mediaFormat) {
         mPOIId = poiId;
         mPOIName = poiName;
+        mPOILat = poiLat;
+        mPOILong = poiLong;
         mPOIDescription = poiDescription;
         mOpen = open;
         mContributor = contributor;
         mIdentifier = identifier;
+        mMediaFormat = mediaFormat;
     }
+
 
     protected LOISequenceModel(Parcel in) {
         mPOIId = in.readString();
         mPOIName = in.readString();
+        mPOILat = in.readDouble();
+        mPOILong = in.readDouble();
         mPOIDescription = in.readString();
+        mContributor = in.readString();
+        mOpen = in.readString();
+        mIdentifier = in.readString();
+        mMediaFormat = in.readInt();
     }
 
     public static final Creator<LOISequenceModel> CREATOR = new Creator<LOISequenceModel>() {
@@ -57,6 +70,11 @@ public class LOISequenceModel implements Parcelable{
         return mPOIName;
     }
 
+    public Double getPOILat() { return mPOILat; }
+
+    public Double getPOILong() { return mPOILong; }
+
+
     public String getPOIDescription(){
         return mPOIDescription;
     }
@@ -75,6 +93,14 @@ public class LOISequenceModel implements Parcelable{
 
     public String getOpen() { return mOpen; }
 
+    public void setMediaFormat(int mediaFormat){
+        this.mMediaFormat = mediaFormat;
+    }
+
+    public int getMediaFormat(){
+        return mMediaFormat;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -84,6 +110,12 @@ public class LOISequenceModel implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mPOIId);
         dest.writeString(mPOIName);
+        dest.writeDouble(mPOILat);
+        dest.writeDouble(mPOILong);
         dest.writeString(mPOIDescription);
+        dest.writeString(mContributor);
+        dest.writeString(mOpen);
+        dest.writeString(mIdentifier);
+        dest.writeInt(mMediaFormat);
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,21 +49,24 @@ public class AOIAdapter extends RecyclerView.Adapter<AOIAdapter.AOIViewHolder> {
 		mDrawableBuilder = TextDrawable.builder()
 				.round();
 //		TextDrawable drawable = mDrawableBuilder.build(String.valueOf(model.getLOIName().charAt(0)), mColorGenerator.getColor(position+1));
-		String identifier = "";
+		String identifier;
 		TextDrawable drawable = null;
-		if(model.getIdentifier().equals("expert")){
+		if(model.getIdentifier().equals("expert")) {
 			identifier = mContext.getString(R.string.expert);
 			drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_indigo_500));
 
 		}
-		else if(model.getIdentifier().equals("user")){
+		else if(model.getIdentifier().equals("user")) {
 			identifier = mContext.getString(R.string.user);
 			drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_orange_500));
 
 		}
-		else {
+		else if(model.getIdentifier().equals("docent")) {
 			identifier = mContext.getString(R.string.narrator);
 			drawable = mDrawableBuilder.build(String.valueOf(identifier.charAt(0)), mContext.getResources().getColor(R.color.md_purple_500));
+		}
+		else {
+			drawable = mDrawableBuilder.build(String.valueOf(model.getLOIName().charAt(0)), mColorGenerator.getColor(model.getLOIName().charAt(0)));
 		}
 
 		holder.imageView.setImageDrawable(drawable);
@@ -73,11 +77,12 @@ public class AOIAdapter extends RecyclerView.Adapter<AOIAdapter.AOIViewHolder> {
 			@Override
 			public void onClick(View view) {
 
-				Intent intent = new Intent(view.getContext(), AOIActivity.class);
-				Bundle bundle = new Bundle();
-				bundle.putParcelable("AOI-Content", model);
-				intent.putExtras(bundle);
-				view.getContext().startActivity(intent);
+					Intent intent = new Intent(view.getContext(), AOIActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putParcelable("AOI-Content", model);
+					intent.putExtras(bundle);
+					view.getContext().startActivity(intent);
+
 			}
 		});
 
