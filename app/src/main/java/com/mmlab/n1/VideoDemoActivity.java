@@ -97,6 +97,8 @@ public class VideoDemoActivity extends AppCompatActivity {
     private int isOrientation = 0;
     private int data = 0;
 
+    private MediaPlayer mMediaPlayer;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_demo);
@@ -268,10 +270,10 @@ public class VideoDemoActivity extends AppCompatActivity {
 
             public void onPrepared(MediaPlayer mediaplayer) {
                 dismissProgressDialog();
+                mMediaPlayer = mediaplayer;
                 videoView_video.seekTo(PLAYBACK.currentPosition);
-
                 if (!PLAYBACK.isError && PLAYBACK.isReady) {
-                    mediaplayer.start();
+                    videoView_video.start();
                 } else {
                     videoView_video.pause();
                     showProgressDialog();
@@ -532,6 +534,7 @@ public class VideoDemoActivity extends AppCompatActivity {
                 PLAYBACK.errorCount = 0;
                 PLAYBACK.currentPosition = 0;
                 videoView_video.pause();
+                videoView_video.stopPlayback();
                 dismissProgressDialog();
                 if (dialog != null) {
                     dialog.dismiss();
