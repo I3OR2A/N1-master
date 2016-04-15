@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -14,6 +15,8 @@ import java.lang.reflect.Method;
  * Created by mmlab on 2015/11/4.
  */
 public class NetWorkUtils {
+
+    private static final String TAG = NetWorkUtils.class.getName();
 
     public static void setMobileDataEnabledMethod1(final Context context, boolean enabled) {
         final ConnectivityManager conman =
@@ -26,24 +29,17 @@ public class NetWorkUtils {
             final Class iConnectivityManagerClass = Class.forName(
                     iConnectivityManager.getClass().getName());
 
-            final Method setMobileDataEnabledMethod = iConnectivityManagerClass
-                    .getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
+            final Method setMobileDataEnabledMethod = iConnectivityManagerClass.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
             setMobileDataEnabledMethod.setAccessible(true);
 
             setMobileDataEnabledMethod.invoke(iConnectivityManager, enabled);
-
-            // 判斷數據連線開啟
-            if (enabled) {
-
-            }
         } catch (Exception e) {
             setMobileDataEnabledMethod2(context, enabled);
-            e.printStackTrace();
+            Log.d(TAG, e.toString(), e);
         }
     }
 
     public static void setMobileDataEnabledMethod2(final Context context, boolean enabled) {
-
         Class[] cArg = new Class[2];
         cArg[0] = String.class;
         cArg[1] = Boolean.TYPE;
@@ -63,11 +59,6 @@ public class NetWorkUtils {
             pArg[1] = enabled;
             setMobileDataEnabledMethod.setAccessible(true);
             setMobileDataEnabledMethod.invoke(iConnectivityManager, pArg);
-
-            //判斷數據連線是否開啟
-            if (enabled) {
-
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

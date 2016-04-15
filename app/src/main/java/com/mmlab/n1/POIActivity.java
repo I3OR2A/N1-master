@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -142,6 +143,10 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_poi, menu);
+
+        //　如果當前是群組導覽功能就除去地圖功能
+        if (Preset.loadModePreference(getApplicationContext()) == IDENTITY.MODE_GUIDE)
+            menu.findItem(R.id.location).setVisible(false);
         return true;
     }
 
@@ -245,7 +250,6 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
 
             }
         });
-
 
 
         if (model.getPOIPics().size() != 0) {
@@ -399,7 +403,7 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
                 }
             } else if (MemberService.FILE_COMPLETE__ACTION.equals(intent.getAction())) {
 //				updateImagesList();
-                Toast.makeText(getApplicationContext(), "Member" + intent.getStringExtra("file"), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Member" + intent.getStringExtra("file"), Toast.LENGTH_SHORT).show();
             } else if (MemberService.PHOTO_START_ACTION.equals(intent.getAction())) {
                 Intent intent1 = new Intent(getApplicationContext(), AlbumActivity.class);
                 Bundle bundle = new Bundle();
@@ -420,6 +424,8 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
             if (intent.getAction().equals(MemberService.VIDEO_START_ACTION)) {
                 Intent intentVideo = new Intent(POIActivity.this, VideoDemoActivity.class);
 //				Log.d(TAG, "Broadcast : " + intent.getLongExtra("mediaLength", -1));
+                PLAYBACK.remoteUri = intent.getStringExtra("remoteUri");
+                PLAYBACK.mediaLength = intent.getLongExtra("mediaLength", -1);
                 intentVideo.putExtra("mediaLength", intent.getLongExtra("mediaLength", -1));
                 intentVideo.putExtra("remoteUri", intent.getStringExtra("remoteUri"));
                 intentVideo.putExtra("data", intent.getIntExtra("data", 0));
@@ -435,26 +441,24 @@ public class POIActivity extends AppCompatActivity implements TaskCompleted {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("OOOOOOOOOOO", "requsetCode : " + requestCode);
         switch (resultCode) {
             case UPDATE_PHOTO:
-                Log.d("HHHHHHH", requestCode + "");
                 break;
             case UPDATE:
                 if (Preset.loadPreferences(getApplicationContext()) == IDENTITY.MEMBER)
-                    Log.d("UUUUUUUUPDATE", mClient.getCurPOI().getPOIName());
-                try {
-                    if (data.getIntExtra("show", Package.SHOW_NONE) == Package.SHOW_AUTO) {
-                        model = mClient.getCurPOI();
-                        loadData();
+                    try {
+                        if (data.getIntExtra("show", Package.SHOW_NONE) == Package.SHOW_AUTO) {
+                            model = mClient.getCurPOI();
+                            loadData();
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
                 break;
             case VIDEO:
                 Intent intent = new Intent(POIActivity.this, VideoDemoActivity.class);
-                PLAYBACK.remoteUri = model.getPOIPMovies().get(0).replace("moe2//", "");
+//              PLAYBACK.remoteUri = model.getPOIPMovies().get(0).replace("moe2//", "");
+                intent.putExtra("data", intent.getIntExtra("data", 0));
                 startActivityForResult(intent, VIDEO);
                 break;
             case PHOTO:

@@ -30,6 +30,7 @@ import com.mmlab.n1.constant.MSN;
 import com.mmlab.n1.decoration.DividerItemDecoration;
 import com.mmlab.n1.model.WifiRecord;
 import com.mmlab.n1.network.MemberService;
+import com.mmlab.n1.network.NetWorkUtils;
 import com.mmlab.n1.network.NetworkManagerN2;
 import com.mmlab.n1.helper.Preset;
 import com.mmlab.n1.network.ProxyService;
@@ -81,7 +82,7 @@ public class GroupFragment extends Fragment {
                 String SSID = "";
                 if (wifiInfo != null && wifiInfo.getSSID() != null)
                     SSID = WifiRecord.normalizedSSID(wifiInfo.getSSID());
-                if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction())) {
+                if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction()) || WifiManager.RSSI_CHANGED_ACTION.equals(intent.getAction())) {
                     mRecords_hashMap = networkManagerN2.getWifiRecord();
                     if (wifiInfo != null && wifiInfo.getSSID() != null && mRecords_hashMap.containsKey(SSID)) {
                         mRecords_hashMap.get(SSID).state = WifiRecord.FINISHED;
@@ -192,6 +193,7 @@ public class GroupFragment extends Fragment {
             }
         };
         intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.RSSI_CHANGED_ACTION);
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -254,7 +256,7 @@ public class GroupFragment extends Fragment {
             mRecords_hashMap.put(networkManagerN2.getWifiApConfiguration().SSID, new WifiRecord(networkManagerN2.getWifiApConfiguration()));
             mRecords.addAll(new ArrayList<WifiRecord>(mRecords_hashMap.values()));
             mAdapter.notifyDataSetChanged();
-        } else if (Preset.loadPreferences(getActivity().getApplicationContext()) == IDENTITY.MEMBER) {
+        } else if ((Preset.loadPreferences(getActivity().getApplicationContext()) == IDENTITY.MEMBER) || (Preset.loadPreferences(getActivity().getApplicationContext()) == IDENTITY.PROXY && Preset.loadModePreference(getActivity().getApplicationContext()) == IDENTITY.MODE_INDIVIDIUAL && NetWorkUtils.isWiFiEnabled(getActivity().getApplicationContext()))) {
             try {
                 getActivity().unregisterReceiver(wifiReceiver);
             } catch (Exception ignored) {

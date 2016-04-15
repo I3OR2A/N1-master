@@ -114,7 +114,6 @@ public class Preset {
     }
 
 
-
     /**
      * 取得當前導覽模式
      *
@@ -125,7 +124,6 @@ public class Preset {
         SharedPreferences sharedPreferences = context.getSharedPreferences("DEH_N", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("mode", IDENTITY.PROXY);
     }
-
 
 
     /**
@@ -161,6 +159,16 @@ public class Preset {
     public static void saveFilePreferences(Context context, String fileName, long fileLength) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("DEH_N", Context.MODE_PRIVATE);
         sharedPreferences.edit().putLong(fileName, fileLength).apply();
+    }
+
+    public static void saveWiFiPreferences(Context context, int wifi) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("DEH_N", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt("WiFi", wifi).apply();
+    }
+
+    public static int loadWiFiPreferences(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("DEH_N", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("WiFi", -1);
     }
 
     /**

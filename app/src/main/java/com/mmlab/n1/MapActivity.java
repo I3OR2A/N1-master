@@ -21,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -36,124 +37,136 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-	private GoogleMap mMap;
-	private Marker marker;
-	private POIModel poiModel;
-	private ArrayList<LOISequenceModel> sequenceList = new ArrayList<>();
-	private ArrayList<Marker> markers = new ArrayList<>();
+    private GoogleMap mMap;
+    private Marker marker;
+    private POIModel poiModel;
+    private ArrayList<LOISequenceModel> sequenceList = new ArrayList<>();
+    private ArrayList<Marker> markers = new ArrayList<>();
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_map);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map);
 
-		sequenceList = (ArrayList<LOISequenceModel>) getIntent().getSerializableExtra("POI-Sequence");
-		poiModel = (POIModel) getIntent().getParcelableExtra("Single-POI");
+        sequenceList = (ArrayList<LOISequenceModel>) getIntent().getSerializableExtra("POI-Sequence");
+        poiModel = (POIModel) getIntent().getParcelableExtra("Single-POI");
 
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		assert getSupportActionBar() != null;
-		getSupportActionBar().setTitle(getIntent().getStringExtra("title"));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setTitle(getIntent().getStringExtra("title"));
 
-		setUpMapIfNeeded();
-	}
+        setUpMapIfNeeded();
+    }
 
-	private void setUpMapIfNeeded() {
-		// Do a null check to confirm that we have not already instantiated the map.
-		if (mMap == null) {
-			// Try to obtain the map from the SupportMapFragment.
-			mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map))
-					.getMap();
-			mMap.setMyLocationEnabled(true);
+    private void setUpMapIfNeeded() {
+        // Do a null check to confirm that we have not already instantiated the map.
+        if (mMap == null) {
+            // Try to obtain the map from the SupportMapFragment.
+            ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map))
+                    .getMapAsync(this);
 
-			if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-				// TODO: Consider calling
-				//    ActivityCompat#requestPermissions
-				// here to request the missing permissions, and then overriding
-				//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-				//                                          int[] grantResults)
-				// to handle the case where the user grants the permission. See the documentation
-				// for ActivityCompat#requestPermissions for more details.
-				return;
-			}
 
-			if (mMap != null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+        }
+    }
 
-				mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_map, menu);
+        return true;
+    }
 
-					@Override
-					public boolean onMarkerClick(Marker marker) {
-						if (marker.getTitle().equals("center")) {
-							marker.hideInfoWindow();
-							return true;
-						} else {
-							marker.showInfoWindow();
-							return false;
-						}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-					}
+        if (id == R.id.close) {
+            finish();
+            return true;
+        }
 
-				});
+        return super.onOptionsItemSelected(item);
+    }
 
-				if(sequenceList != null) {
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        if (mMap != null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            mMap.setMyLocationEnabled(true);
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
-					for (LOISequenceModel model : sequenceList) {
-						marker = mMap.addMarker(new MarkerOptions().position(new LatLng(model.getPOILat(), model.getPOILong())).title(model.getPOIName()));
-						markers.add(marker);
-					}
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    if (marker.getTitle().equals("center")) {
+                        marker.hideInfoWindow();
+                        return true;
+                    } else {
+                        marker.showInfoWindow();
+                        return false;
+                    }
 
-					LatLngBounds.Builder builder = new LatLngBounds.Builder();
-					for (Marker m : markers) {
-						Log.d("marker", m.getPosition() + "");
-						builder.include(m.getPosition());
-					}
+                }
 
-					LatLngBounds bounds = builder.build();
+            });
 
-					int width = getResources().getDisplayMetrics().widthPixels;
-					int height = getResources().getDisplayMetrics().heightPixels;
-					int padding = (int) (width * 0.12);
-					CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-					mMap.moveCamera(cu);
-				}
-				else if(poiModel != null) {
+            if (sequenceList != null) {
 
-					LatLng position = new LatLng(poiModel.getPOILat(), poiModel.getPOILong());
-					CameraPosition cameraPosition = new CameraPosition.Builder()
-							.target(position)
-							.zoom(18)
-							.build();
-					mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-					mMap.addMarker(new MarkerOptions().position(position).title(poiModel.getPOIName()));
+                for (LOISequenceModel model : sequenceList) {
+                    marker = mMap.addMarker(new MarkerOptions().position(new LatLng(model.getPOILat(), model.getPOILong())).title(model.getPOIName()));
+                    markers.add(marker);
+                }
 
-				}
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker m : markers) {
+                    Log.d("marker", m.getPosition() + "");
+                    builder.include(m.getPosition());
+                }
 
-			}
-		}
-	}
+                LatLngBounds bounds = builder.build();
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_map, menu);
-		return true;
-	}
+                int width = getResources().getDisplayMetrics().widthPixels;
+                int height = getResources().getDisplayMetrics().heightPixels;
+                int padding = (int) (width * 0.12);
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                mMap.moveCamera(cu);
+            } else if (poiModel != null) {
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+                LatLng position = new LatLng(poiModel.getPOILat(), poiModel.getPOILong());
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(position)
+                        .zoom(18)
+                        .build();
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                mMap.addMarker(new MarkerOptions().position(position).title(poiModel.getPOIName()));
 
-		if (id == R.id.close) {
-			finish();
-			return true;
-		}
+            }
 
-		return super.onOptionsItemSelected(item);
-	}
-
+        }
+    }
 }

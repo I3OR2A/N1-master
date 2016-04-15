@@ -12,4 +12,5 @@ public class MSN {
     public static String FB_ID = "";
     public static String FB_FL = "";
     public static String FB_NAME = "";
+    public static int WIFI_ACCESS = -1;
 }

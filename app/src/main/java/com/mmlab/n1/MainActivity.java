@@ -9,7 +9,9 @@ import android.content.ServiceConnection;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.ConnectivityManager;
 import android.net.http.HttpResponseCache;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -37,6 +39,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.facebook.FacebookSdk;
@@ -48,9 +51,13 @@ import com.mmlab.n1.constant.IDENTITY;
 import com.mmlab.n1.constant.MSN;
 import com.mmlab.n1.helper.ExternalStorage;
 import com.mmlab.n1.model.DEHUser;
+import com.mmlab.n1.model.Friend;
 import com.mmlab.n1.model.POIModel;
 import com.mmlab.n1.network.CacheService;
+import com.mmlab.n1.network.NetworkManager;
+import com.mmlab.n1.network.NetworkManagerN2;
 import com.mmlab.n1.service.Filter;
+import com.mmlab.n1.service.FirstUsage;
 import com.mmlab.n1.widget.ExitDialog;
 import com.mmlab.n1.fragment.GroupFragment;
 import com.mmlab.n1.fragment.SiteFragment;
@@ -85,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
     public static final int PAGE_SITE = 1;
     private Toolbar toolbar = null;
     private TabLayout tabLayout = null;
-    private static final int SIGN_IN=1;
+    private static final int SIGN_IN = 1;
 
     /**
      * V2 Start
@@ -185,7 +192,6 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         getSupportActionBar().setTitle("DEH Narrator");
 
 
-
         navigationDrawer = new NavigationDrawer(this, toolbar);
 
         identityDialog = new IdentityDialog();
@@ -279,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         startService();
 
 
-
     }
 
     public void init() {
@@ -295,166 +300,166 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
             public void onClick(View view) {
                 if (globalVariable.checkInternet()) {
 
-                        userResult = realm.where(DEHUser.class)
-                                .findAll();
+                    userResult = realm.where(DEHUser.class)
+                            .findAll();
 
-                        for (DEHUser user : userResult) {
-                            userId = user.getId();
-                        }
+                    for (DEHUser user : userResult) {
+                        userId = user.getId();
+                    }
 
-                        MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
-                                .title(R.string.search_settings)
-                                .customView(R.layout.dialog_search, true)
-                                .positiveText(R.string.search)
-                                .negativeText(R.string.cancel)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                        if (number != 0 && distance != 0) {
-                                            Double lat = globalVariable.getLatitude();
-                                            Double lng = globalVariable.getLongitude();
-                                            if (selectTab == 0) {
-                                                mType = "POI";
-                                                api = getResources().getString(R.string.api_nearbyPOIs);
-                                            } else if (selectTab == 1) {
-                                                mType = "LOI";
-                                                api = getResources().getString(R.string.api_nearbyLOIs);
-                                            } else if (selectTab == 2) {
-                                                mType = "AOI";
-                                                api = getResources().getString(R.string.api_nearbyAOIs);
-                                            } else if (selectTab == 3) {
-                                                mType = "MyPOI";
-                                                api = getResources().getString(R.string.api_userPOIs);
-                                            } else if (selectTab == 4) {
-                                                mType = "MyLOI";
-                                                api = getResources().getString(R.string.api_userLOIs);
-                                            } else if (selectTab == 5) {
-                                                mType = "MyAOI";
-                                                api = getResources().getString(R.string.api_userAOIs);
-                                            }
-
-                                            globalVariable.setStatus(mType);
-
-                                            String language = Locale.getDefault().getDisplayLanguage();
-                                            if (language.equals("English"))
-                                                language = "en";
-                                            else if (language.equals("中文"))
-                                                language = "zh-tw";
-                                            else if (language.equals("日本語"))
-                                                language = "ja";
-
-                                            Log.d("lang", language);
-
-                                            url = api + "lat=" + lat + "&lng=" + lng + "&dist=" + distance + "&num=" +
-                                                    number + "&did=" + globalVariable.getDeviceID() +
-                                                    "&appver=mini200&ulat=22.9942&ulng=120.1659&clang=" + language;
-
-                                            if (selectTab > 2) {
-                                                url = api + "id=" + userId + "&lat=" + lat + "&lng=" + lng + "&dist=" + distance + "&num=" +
-                                                        number + "&did=" + globalVariable.getDeviceID() +
-                                                        "&appver=mini200&ulat=22.9942&ulng=120.1659";
-                                            }
-
-                                            Log.d("url", url);
-                                            Log.d("type", mType);
-
-                                            if (!taskRunning) {
-                                                mServer.Search(mType, url);
-
-                                                fabProgressCircle.show();
-                                                taskRunning = true;
-                                            }
-
+                    MaterialDialog dialog = new MaterialDialog.Builder(MainActivity.this)
+                            .title(R.string.search_settings)
+                            .customView(R.layout.dialog_search, true)
+                            .positiveText(R.string.search)
+                            .negativeText(R.string.cancel)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
+                                    if (number != 0 && distance != 0) {
+                                        Double lat = globalVariable.getLatitude();
+                                        Double lng = globalVariable.getLongitude();
+                                        if (selectTab == 0) {
+                                            mType = "POI";
+                                            api = getResources().getString(R.string.api_nearbyPOIs);
+                                        } else if (selectTab == 1) {
+                                            mType = "LOI";
+                                            api = getResources().getString(R.string.api_nearbyLOIs);
+                                        } else if (selectTab == 2) {
+                                            mType = "AOI";
+                                            api = getResources().getString(R.string.api_nearbyAOIs);
+                                        } else if (selectTab == 3) {
+                                            mType = "MyPOI";
+                                            api = getResources().getString(R.string.api_userPOIs);
+                                        } else if (selectTab == 4) {
+                                            mType = "MyLOI";
+                                            api = getResources().getString(R.string.api_userLOIs);
+                                        } else if (selectTab == 5) {
+                                            mType = "MyAOI";
+                                            api = getResources().getString(R.string.api_userAOIs);
                                         }
 
-                                        selectTab = 0;
-                                        identifier = "all";
-                                        media = "all";
-                                        category = "all";
+                                        globalVariable.setStatus(mType);
+
+                                        String language = Locale.getDefault().getDisplayLanguage();
+                                        if (language.equals("English"))
+                                            language = "en";
+                                        else if (language.equals("中文"))
+                                            language = "zh-tw";
+                                        else if (language.equals("日本語"))
+                                            language = "ja";
+
+                                        Log.d("lang", language);
+
+                                        url = api + "lat=" + lat + "&lng=" + lng + "&dist=" + distance + "&num=" +
+                                                number + "&did=" + globalVariable.getDeviceID() +
+                                                "&appver=mini200&ulat=22.9942&ulng=120.1659&clang=" + language;
+
+                                        if (selectTab > 2) {
+                                            url = api + "id=" + userId + "&lat=" + lat + "&lng=" + lng + "&dist=" + distance + "&num=" +
+                                                    number + "&did=" + globalVariable.getDeviceID() +
+                                                    "&appver=mini200&ulat=22.9942&ulng=120.1659";
+                                        }
+
+                                        Log.d("url", url);
+                                        Log.d("type", mType);
+
+                                        if (!taskRunning) {
+                                            mServer.Search(mType, url);
+
+                                            fabProgressCircle.show();
+                                            taskRunning = true;
+                                        }
+
                                     }
-                                })
-                                .build();
 
-                        TabLayout tabLayout = (TabLayout) dialog.getCustomView().findViewById(R.id.tab);
-                        tabLayout.addTab(tabLayout.newTab().setText(R.string.poi));
-                        tabLayout.addTab(tabLayout.newTab().setText(R.string.loi));
-                        tabLayout.addTab(tabLayout.newTab().setText(R.string.aoi));
+                                    selectTab = 0;
+                                    identifier = "all";
+                                    media = "all";
+                                    category = "all";
+                                }
+                            })
+                            .build();
 
-                        if (!userResult.isEmpty()) {
-                            tabLayout.addTab(tabLayout.newTab().setText(R.string.mypoi));
-                            tabLayout.addTab(tabLayout.newTab().setText(R.string.myloi));
-                            tabLayout.addTab(tabLayout.newTab().setText(R.string.myaoi));
+                    TabLayout tabLayout = (TabLayout) dialog.getCustomView().findViewById(R.id.tab);
+                    tabLayout.addTab(tabLayout.newTab().setText(R.string.poi));
+                    tabLayout.addTab(tabLayout.newTab().setText(R.string.loi));
+                    tabLayout.addTab(tabLayout.newTab().setText(R.string.aoi));
+
+                    if (!userResult.isEmpty()) {
+                        tabLayout.addTab(tabLayout.newTab().setText(R.string.mypoi));
+                        tabLayout.addTab(tabLayout.newTab().setText(R.string.myloi));
+                        tabLayout.addTab(tabLayout.newTab().setText(R.string.myaoi));
+                    }
+
+                    final ViewPager viewPager = (ViewPager) dialog.getCustomView().findViewById(R.id.viewpager);
+
+                    viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+                    tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                        @Override
+                        public void onTabSelected(TabLayout.Tab tab) {
+
+                            selectTab = tab.getPosition();
                         }
 
-                        final ViewPager viewPager = (ViewPager) dialog.getCustomView().findViewById(R.id.viewpager);
+                        @Override
+                        public void onTabUnselected(TabLayout.Tab tab) {
 
-                        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-                        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-                            @Override
-                            public void onTabSelected(TabLayout.Tab tab) {
+                        }
 
-                                selectTab = tab.getPosition();
-                            }
+                        @Override
+                        public void onTabReselected(TabLayout.Tab tab) {
 
-                            @Override
-                            public void onTabUnselected(TabLayout.Tab tab) {
+                        }
+                    });
 
-                            }
+                    SeekBar seekbarDistance = (SeekBar) dialog.getCustomView().findViewById(R.id.seekBar_distance);
+                    seekbarDistance.setProgress(DEFAULT_DISTANCE);
+                    distance = (double) DEFAULT_DISTANCE;
+                    final TextView textViewDistance = (TextView) dialog.getCustomView().findViewById(R.id.text_distance);
+                    textViewDistance.setText(new DecimalFormat("#0.0").format(DEFAULT_DISTANCE / 1000) + " " + getString(R.string.kilometer));
+                    seekbarDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            distance = (double) progress;
+                        }
 
-                            @Override
-                            public void onTabReselected(TabLayout.Tab tab) {
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
 
-                            }
-                        });
+                        }
 
-                        SeekBar seekbarDistance = (SeekBar) dialog.getCustomView().findViewById(R.id.seekBar_distance);
-                        seekbarDistance.setProgress(DEFAULT_DISTANCE);
-                        distance = (double) DEFAULT_DISTANCE;
-                        final TextView textViewDistance = (TextView) dialog.getCustomView().findViewById(R.id.text_distance);
-                        textViewDistance.setText(new DecimalFormat("#0.0").format(DEFAULT_DISTANCE / 1000) + " " + getString(R.string.kilometer));
-                        seekbarDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                            @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                distance = (double) progress;
-                            }
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            textViewDistance.setText(new DecimalFormat("#0.0").format(distance / 1000) + " " + getString(R.string.kilometer));
+                        }
+                    });
 
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
+                    SeekBar seekbarNumber = (SeekBar) dialog.getCustomView().findViewById(R.id.seekBar_number);
+                    seekbarNumber.setProgress(DEFAULT_NUMBER);
+                    number = DEFAULT_NUMBER;
+                    final TextView textViewNumber = (TextView) dialog.getCustomView().findViewById(R.id.text_number);
+                    textViewNumber.setText(seekbarNumber.getProgress() + " " + getResources().getString(R.string.unit));
+                    seekbarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            number = progress;
+                        }
 
-                            }
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
 
-                            @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
-                                textViewDistance.setText(new DecimalFormat("#0.0").format(distance / 1000) + " " + getString(R.string.kilometer));
-                            }
-                        });
+                        }
 
-                        SeekBar seekbarNumber = (SeekBar) dialog.getCustomView().findViewById(R.id.seekBar_number);
-                        seekbarNumber.setProgress(DEFAULT_NUMBER);
-                        number = DEFAULT_NUMBER;
-                        final TextView textViewNumber = (TextView) dialog.getCustomView().findViewById(R.id.text_number);
-                        textViewNumber.setText(seekbarNumber.getProgress() + " " + getResources().getString(R.string.unit));
-                        seekbarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                            @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                number = progress;
-                            }
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            textViewNumber.setText(number + " " + getResources().getString(R.string.unit));
+                        }
+                    });
 
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
-
-                            }
-
-                            @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
-                                textViewNumber.setText(number + " " + getResources().getString(R.string.unit));
-                            }
-                        });
-
-                        dialog.show();
+                    dialog.show();
 
 
-                }else {
+                } else {
                     globalVariable.noticeInternet(MainActivity.this, fab);
                 }
             }
@@ -491,6 +496,8 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
 
             }
         }
+
+        unregisterReceiver(mBroadcastReceiver);
     }
 
     public void onRegisteProxyReceiver() {
@@ -526,7 +533,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         Log.d(TAG, "onResume()...");
         Log.d(TAG, "refresh_drawer : " + getIntent().getBooleanExtra("refresh_drawer", false));
 
-        if(getIntent().getBooleanExtra("refresh_drawer", false) == true){
+        if (getIntent().getBooleanExtra("refresh_drawer", false) == true) {
             globalVariable.createDrawer(navigationDrawer);
 
         }
@@ -567,6 +574,12 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
             }
         }
 
+        IntentFilter intentFilter = new IntentFilter();
+
+        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        intentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mBroadcastReceiver, intentFilter);
 
         /** V2 End **/
     }
@@ -698,8 +711,8 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
 //            Toast.makeText(MainActivity.this, "Service is connected", Toast.LENGTH_SHORT).show();
             ProxyService.ProxyBinder mLocalBinder = (ProxyService.ProxyBinder) service;
             mServer = mLocalBinder.getProxyInstance();
-            Log.d("service","Service is connected");
-            if(globalVariable.checkInternet()){
+            Log.d("service", "Service is connected");
+            if (globalVariable.checkInternet()) {
                 mServer.retrieveIp();
             }
         }
@@ -742,7 +755,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
 
     @Override
     public void onFABProgressAnimationEnd() {
-        if(hint!=null)
+        if (hint != null)
             Snackbar.make(fab, hint, Snackbar.LENGTH_SHORT).show();
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -759,16 +772,15 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         }
 
         public void onReceive(Context context, Intent intent) {
-            if(ProxyService.GETLOGIN_ACTION.equals(intent.getAction())){
-                if(mServer.getLogInStatus()){
+            if (ProxyService.GETLOGIN_ACTION.equals(intent.getAction())) {
+                if (mServer.getLogInStatus()) {
                     hint = getResources().getString(R.string.login_success);
-                }
-                else {
+                } else {
                     hint = getResources().getString(R.string.login_failure);
                 }
                 Snackbar.make(coordinatorLayout, hint, Snackbar.LENGTH_SHORT).show();
             }
-            if ( viewPager.getCurrentItem() == PAGE_SITE ) {
+            if (viewPager.getCurrentItem() == PAGE_SITE) {
                 taskRunning = false;
                 fabProgressCircle.beginFinalAnimation();
                 page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
@@ -777,39 +789,39 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                     Filter filter = new Filter(getApplicationContext());
                     final ArrayList<POIModel> filteredModelList, filteredModelList1, filteredModelList2;
 
-                    if( identifier!=null && media!= null && category != null ) {
+                    if (identifier != null && media != null && category != null) {
                         if (identifier.equals("all") && media.equals("all") && category.equals("all")) {
                             ((SiteFragment) page).updateSites(mServer, 0, mType);
-                            hint = getString(R.string.find) + " " + mServer.getPOIList().size() + " " +  getString(R.string.sites);
+                            hint = getString(R.string.find) + " " + mServer.getPOIList().size() + " " + getString(R.string.sites);
 
-                        } else if ( !identifier.equals("all") && media.equals("all") && category.equals("all")) {
+                        } else if (!identifier.equals("all") && media.equals("all") && category.equals("all")) {
                             filteredModelList = filter.identifierFilter(mServer.getPOIList(), identifier.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList);
 
                             if (filteredModelList.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) +  " " + filteredModelList.size() + " " +  getString(R.string.sites);
+                                hint = getString(R.string.find) + " " + filteredModelList.size() + " " + getString(R.string.sites);
 
-                        } else if ( identifier.equals("all") && !media.equals("all") && category.equals("all")) {
+                        } else if (identifier.equals("all") && !media.equals("all") && category.equals("all")) {
                             filteredModelList = filter.mediaFilter(mServer.getPOIList(), media.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList);
 
                             if (filteredModelList.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) +  " " + filteredModelList.size() + " " + getString(R.string.sites);
+                                hint = getString(R.string.find) + " " + filteredModelList.size() + " " + getString(R.string.sites);
 
-                        } else if ( identifier.equals("all") && media.equals("all") && !category.equals("all")) {
+                        } else if (identifier.equals("all") && media.equals("all") && !category.equals("all")) {
                             filteredModelList = filter.categoryFilter(mServer.getPOIList(), category.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList);
 
                             if (filteredModelList.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint =  getString(R.string.find) +  " " + filteredModelList.size() + " " +  getString(R.string.sites);
+                                hint = getString(R.string.find) + " " + filteredModelList.size() + " " + getString(R.string.sites);
 
-                        } else if ( !identifier.equals("all") && !media.equals("all") && category.equals("all")) {
+                        } else if (!identifier.equals("all") && !media.equals("all") && category.equals("all")) {
                             filteredModelList = filter.identifierFilter(mServer.getPOIList(), identifier.toLowerCase());
                             filteredModelList1 = filter.mediaFilter(filteredModelList, media.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList1);
@@ -817,9 +829,9 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             if (filteredModelList1.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) +  " " + filteredModelList1.size() + " " +  getString(R.string.sites);
+                                hint = getString(R.string.find) + " " + filteredModelList1.size() + " " + getString(R.string.sites);
 
-                        } else if ( !identifier.equals("all") && media.equals("all") && !category.equals("all")) {
+                        } else if (!identifier.equals("all") && media.equals("all") && !category.equals("all")) {
                             filteredModelList = filter.identifierFilter(mServer.getPOIList(), identifier.toLowerCase());
                             filteredModelList1 = filter.categoryFilter(filteredModelList, category.toLowerCase());
                             ((SiteFragment) page).updatePOI(filteredModelList1);
@@ -827,7 +839,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             if (filteredModelList1.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) +  " " + filteredModelList1.size() + " " +  getString(R.string.sites);
+                                hint = getString(R.string.find) + " " + filteredModelList1.size() + " " + getString(R.string.sites);
 
                         } else if (identifier.equals("all") && !media.equals("all") && !category.equals("all")) {
                             filteredModelList = filter.mediaFilter(mServer.getPOIList(), media.toLowerCase());
@@ -837,7 +849,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             if (filteredModelList1.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint = getString(R.string.find) +  " " + filteredModelList1.size() +  " " +  getString(R.string.sites);
+                                hint = getString(R.string.find) + " " + filteredModelList1.size() + " " + getString(R.string.sites);
 
                         } else {
                             filteredModelList = filter.identifierFilter(mServer.getPOIList(), identifier.toLowerCase());
@@ -848,7 +860,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             if (filteredModelList2.size() == 0)
                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.not_match), Toast.LENGTH_SHORT).show();
                             else
-                                hint =  getString(R.string.find) +  " " + filteredModelList2.size() + " " +  getString(R.string.sites);
+                                hint = getString(R.string.find) + " " + filteredModelList2.size() + " " + getString(R.string.sites);
                         }
                     }
 
@@ -859,12 +871,12 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                     ((SiteFragment) page).updateSites(mServer, 1, mType);
                     ProxyService.type = 1;
                     mMenu.findItem(R.id.filter).setVisible(false);
-                    hint = getString(R.string.find) + " " +  mServer.getLOIList().size() +  " " + getString(R.string.lines);
+                    hint = getString(R.string.find) + " " + mServer.getLOIList().size() + " " + getString(R.string.lines);
                 } else if (ProxyService.GETAOI_ACTION.equals(intent.getAction())) {
                     ((SiteFragment) page).updateSites(mServer, 2, mType);
                     ProxyService.type = 2;
                     mMenu.findItem(R.id.filter).setVisible(false);
-                    hint = getString(R.string.find) +  " " + mServer.getAOIList().size() +  " " + getString(R.string.areas);
+                    hint = getString(R.string.find) + " " + mServer.getAOIList().size() + " " + getString(R.string.areas);
                 }
             }
 //            if (ProxyService.GETPOI_ACTION.equals(intent.getAction())) {
@@ -981,7 +993,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                 userId = user.getId();
             }
 
-            if(!userResult.isEmpty()){
+            if (!userResult.isEmpty()) {
 
 
                 new MaterialDialog.Builder(this)
@@ -998,8 +1010,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
                             }
                         })
                         .show();
-            }
-            else {
+            } else {
 
                 MaterialDialog dialog = new MaterialDialog.Builder(this)
                         .title(R.string.deh_sign_in)
@@ -1041,7 +1052,6 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
             }
 
 
-
         }
         if (id == R.id.filter) {
 
@@ -1059,7 +1069,7 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
         this.media = media;
         this.category = category;
         hint = null;
-        Log.d("push", identifier+media+category);
+        Log.d("push", identifier + media + category);
         mServer.Search(mType, url);
     }
 
@@ -1067,9 +1077,9 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch(requestCode){
+        switch (requestCode) {
             case SIGN_IN:
-                if(data!=null) {
+                if (data != null) {
                     if (data.getExtras().getString("login_success").equals("Login Success"))
                         identityDialog.show(getFragmentManager(), "identityDialog");
                 }
@@ -1077,6 +1087,53 @@ public class MainActivity extends AppCompatActivity implements FABProgressListen
     }
 
 
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            NetworkManager networkManager = new NetworkManager(getApplicationContext());
+            Log.d(TAG, "connect server upload");
+            if (Preset.loadPreferences(getApplicationContext()) == IDENTITY.PROXY && networkManager.isConnected()) {
+                Log.d(TAG, "connect server upload inner");
+                Realm realm = Realm.getInstance(MainActivity.this);
+                RealmResults<User> userResult = realm.where(User.class)
+                        .findAll();
 
+                ArrayList<String> friendList = new ArrayList<>();
+                for (User user : userResult) {
+                    MSN.FB_ID = user.getId();
+                    MSN.FB_NAME = user.getName();
+                    for (Friend friend : user.getFriends()) {
+                        if (friend.isValid()) {
+                            friendList.add(friend.getId());
+                            Log.d("test", friend.toString());
+                        }
+                    }
+                }
 
+                MSN.FB_FL = friendList.toString();
+
+                NetworkManagerN2 networkManagerN2 = new NetworkManagerN2(getApplicationContext());
+                MSN.WIFI_ACCESS = Preset.loadWiFiPreferences(getApplicationContext());
+                switch (MSN.WIFI_ACCESS) {
+                    case 0:
+                        new FirstUsage(MainActivity.this, networkManagerN2.getWifiApConfiguration()).execute(MSN.FB_ID, MSN.FB_NAME, MSN.FB_FL, "public");
+                        break;
+                    case 1:
+                        new FirstUsage(MainActivity.this, networkManagerN2.getWifiApConfiguration()).execute(MSN.FB_ID, MSN.FB_NAME, MSN.FB_FL, "friend");
+                        break;
+                    case 2:
+                        new FirstUsage(MainActivity.this, networkManagerN2.getWifiApConfiguration()).execute(MSN.FB_ID, MSN.FB_NAME, MSN.FB_FL, "group");
+                        break;
+                }
+            }
+
+            if (Preset.loadPreferences(getApplicationContext()) == IDENTITY.PROXY && Preset.loadModePreference(getApplicationContext()) == IDENTITY.MODE_INDIVIDIUAL) {
+                if (viewPager.getCurrentItem() == 0) {
+                    Log.d(TAG, "onIdentityChanged()...");
+                    Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+                    ((GroupFragment) page).onIdentityChanged();
+                }
+            }
+        }
+    };
 }

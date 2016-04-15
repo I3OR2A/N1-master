@@ -214,14 +214,18 @@ public class IdentityDialog extends DialogFragment {
                             MSN.FB_FL = friendList.toString();
 
                             NetworkManagerN2 networkManagerN2 = new NetworkManagerN2(getActivity().getApplicationContext());
+                            Preset.saveWiFiPreferences(getActivity().getApplicationContext(), spinner.getSelectedItemPosition());
                             switch (spinner.getSelectedItemPosition()) {
                                 case 0:
+                                    MSN.WIFI_ACCESS = 0;
                                     new FirstUsage(getActivity(), networkManagerN2.getWifiApConfiguration()).execute(MSN.FB_ID, MSN.FB_NAME, MSN.FB_FL, "public");
                                     break;
                                 case 1:
+                                    MSN.WIFI_ACCESS = 1;
                                     new FirstUsage(getActivity(), networkManagerN2.getWifiApConfiguration()).execute(MSN.FB_ID, MSN.FB_NAME, MSN.FB_FL, "friend");
                                     break;
                                 case 2:
+                                    MSN.WIFI_ACCESS = 2;
                                     new FirstUsage(getActivity(), networkManagerN2.getWifiApConfiguration()).execute(MSN.FB_ID, MSN.FB_NAME, MSN.FB_FL, "group");
                                     break;
                             }

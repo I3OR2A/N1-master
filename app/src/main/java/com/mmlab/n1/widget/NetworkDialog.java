@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.mmlab.n1.MainActivity;
 import com.mmlab.n1.R;
 import com.mmlab.n1.network.NetWorkUtils;
 import com.mmlab.n1.network.NetworkManager;

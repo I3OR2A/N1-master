@@ -141,7 +141,7 @@ public class VideoDemoActivity extends AppCompatActivity {
             case R.id.action_settings:
                 return true;
             case android.R.id.home:
-                    finish();
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -195,7 +195,7 @@ public class VideoDemoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-            super.onBackPressed();
+        super.onBackPressed();
     }
 
     protected void onDestroy() {
@@ -247,7 +247,7 @@ public class VideoDemoActivity extends AppCompatActivity {
             localUri = ExternalStorage.BASE_ROOT + File.separator + ExternalStorage.TARGET_DIRECTORY + File.separator + Utils.urlToFilename(PLAYBACK.remoteUri);
         }
 
-        MediaController mediaController = new MediaController(this) {
+        MediaController mediaController = new MediaController(this, false) {
             public void show() {
                 super.show();
                 if (getSupportActionBar() != null) getSupportActionBar().show();
@@ -401,6 +401,7 @@ public class VideoDemoActivity extends AppCompatActivity {
                     }
                     break;
                 case CACHE_VIDEO_END:
+
                     videoView_video.setVideoPath(localUri);
                     videoView_video.start();
                     PLAYBACK.isError = false;
@@ -502,6 +503,8 @@ public class VideoDemoActivity extends AppCompatActivity {
                 mHandler.sendEmptyMessage(CACHE_VIDEO_READY);
                 Log.d(TAG, "CACHE_VIDEO_READY");
             } else if (intent.getAction().equals(VideoService.CACHE_VIDEO_END)) {
+                mHandler.removeCallbacksAndMessages(null);
+                mHandler.sendEmptyMessage(VIDEO_STATE_UPDATE);
                 mHandler.sendEmptyMessage(CACHE_VIDEO_END);
                 Log.d(TAG, "CACHE_VIDEO_END");
             } else if (intent.getAction().equals(VideoService.SHOW_PROGRESS_DIALOG)) {
@@ -546,7 +549,7 @@ public class VideoDemoActivity extends AppCompatActivity {
                     VideoDemoActivity.this.setResult(POIActivity.UPDATE, i);
                     VideoDemoActivity.this.finish();
                 }
-            }else if(MemberService.PHOTO_START_ACTION.equals(intent.getAction())){
+            } else if (MemberService.PHOTO_START_ACTION.equals(intent.getAction())) {
                 Intent i = new Intent();
                 VideoDemoActivity.this.setResult(POIActivity.PHOTO, i);
                 VideoDemoActivity.this.finish();

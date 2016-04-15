@@ -99,7 +99,7 @@ public class ProxyService extends Service implements TaskCompleted {
 
     }
 
-    public void retrieveIp(){
+    public void retrieveIp() {
         pHandler.sendEmptyMessage(0);
     }
 
@@ -168,8 +168,7 @@ public class ProxyService extends Service implements TaskCompleted {
             if (type.equals("IP")) {
                 globalVariable.setIp(response.replaceAll("\n", ""));
                 Log.d("ip", globalVariable.getIp());
-            }
-            else if(type.equals("DEH log in")){
+            } else if (type.equals("DEH log in")) {
                 Log.d("result ", response);
 
 
@@ -199,7 +198,7 @@ public class ProxyService extends Service implements TaskCompleted {
 
     }
 
-    public Boolean getLogInStatus(){
+    public Boolean getLogInStatus() {
         return isLogIn;
     }
 
@@ -227,7 +226,7 @@ public class ProxyService extends Service implements TaskCompleted {
     }
 
     public void Search(String type, String url) {
-        if (globalVariable.getIp()==null)
+        if (globalVariable.getIp() == null)
             pHandler.sendEmptyMessage(0);
 
         Message message = pHandler.obtainMessage();
@@ -597,15 +596,14 @@ public class ProxyService extends Service implements TaskCompleted {
                 case 2:
                     // get log in status
                     String response = msg.getData().getString("response");
-                    if(response.contains("login success")){
-                    realm = Realm.getInstance(getApplicationContext());
-                    realm.beginTransaction();
-                    DEHUser user = realm.createObject(DEHUser.class);
-                    user.setId(account);
-                    realm.commitTransaction();
+                    if (response.contains("login success")) {
+                        realm = Realm.getInstance(getApplicationContext());
+                        realm.beginTransaction();
+                        DEHUser user = realm.createObject(DEHUser.class);
+                        user.setId(account);
+                        realm.commitTransaction();
                         isLogIn = true;
-                    }
-                    else {
+                    } else {
                         isLogIn = false;
                     }
                     Log.d("test", response);
@@ -634,11 +632,15 @@ public class ProxyService extends Service implements TaskCompleted {
 //                        savePOI.parsePoiListJSONObject(result, status);
                         poiList.clear();
                         poiList = savePOI.getPOIList();
+                        if (poiList == null)
+                            poiList = new ArrayList<>();
                         intent.setAction(GETPOI_ACTION);
                     } else if (type.equals("LOI") || type.equals("MyLOI")) {
                         SaveLOI saveLOI = new SaveLOI(result);
                         loiList.clear();
                         loiList = saveLOI.getLOIList();
+                        if (loiList == null)
+                            loiList = new ArrayList<>();
                         for (int i = 0; i < loiList.size(); ++i) {
                             LOIModel md = loiList.get(i);
                             if (md.getIdentifier().equals("docent")) {
@@ -652,6 +654,8 @@ public class ProxyService extends Service implements TaskCompleted {
                         SaveAOI saveAOI = new SaveAOI(result);
                         aoiList.clear();
                         aoiList = saveAOI.getAOIList();
+                        if (aoiList == null)
+                            aoiList = new ArrayList<>();
                         for (int i = 0; i < aoiList.size(); ++i) {
                             LOIModel md = aoiList.get(i);
                             if (md.getIdentifier().equals("docent")) {
